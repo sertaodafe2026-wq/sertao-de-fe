@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="position:relative;width:100%;height:100%;min-height:420px;background:#0F120F;overflow:hidden;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#FFF;border-radius: {{ radius }}">
+  <div ref="{{ rootRef }}" style="position:absolute;inset:0">{{ mapSvg }}</div>
+  <sc-if value="{{ hasCard }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left: {{ card.left }};top: {{ card.top }};transition: {{ card.tr }};width:0;height:0;z-index:5">
+      <div onClick="{{ card.open }}" style="position:absolute;left:-135px;bottom:22px;width:270px;display:flex;gap:12px;align-items:center;padding:10px;border-radius:14px;background:#FFF;color:#141614;box-shadow:0 16px 36px rgba(0,0,0,0.5);cursor:pointer;animation:mapPop .25s ease">
+        <img src="{{ card.cover }}" alt="" style="width:74px;height:84px;object-fit:cover;border-radius:37px 37px 8px 8px;flex:none">
+        <div style="min-width:0">
+          <div style="font-size:10px;letter-spacing:1.5px;font-weight:800;text-transform:uppercase;color: {{ card.metaColor }}">{{ card.meta }}</div>
+          <div style="font-size:14px;font-weight:700;line-height:1.25;margin:3px 0 2px">{{ card.name }}</div>
+          <div style="font-size:12px;color:#5B625D">{{ card.padroeiro }}</div>
+          <div style="font-size:12px;font-weight:700;margin-top:6px">{{ card.cta }}</div>
+        </div>
+        <span style="position:absolute;left:128px;bottom:-6px;width:14px;height:14px;background:#FFF;transform:rotate(45deg)"></span>
+      </div>
+    </div>
+  </sc-if>
+  <div style="position:absolute;top:18px;left:18px;right:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;pointer-events:none">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;pointer-events:auto">
+      <sc-for list="{{ chips }}" as="z" hint-placeholder-count="4">
+        <button onClick="{{ z.onClick }}" style="display:flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid {{ z.border }};background: {{ z.bg }};color: {{ z.color }};backdrop-filter:blur(8px)"><span style="width:8px;height:8px;border-radius:50%;background: {{ z.dot }}"></span>{{ z.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+  <div style="position:absolute;left:50%;bottom:22px;transform:translateX(-50%);font-size:12px;color:#B8C0B9;padding:8px 14px;border-radius:999px;background:rgba(15,18,15,0.7);white-space:nowrap;pointer-events:none">{{ hint }}</div>
+  <div style="position:absolute;left:18px;bottom:18px;display:flex;flex-direction:column;gap:7px;padding:14px 16px;border-radius:12px;background:rgba(15,18,15,0.78);border:1px solid #2A2F2A;backdrop-filter:blur(8px);pointer-events:none">
+    <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#9AA39C;margin-bottom:2px">Rotas</div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600"><span style="width:10px;height:10px;border-radius:50%;background:#6E9BD0"></span>Urbana</div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600"><span style="width:10px;height:10px;border-radius:50%;background:#D98B5B"></span>Rural</div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600"><span style="width:10px;height:10px;border-radius:50%;background:#8DBF98"></span>Distrital</div>
+  </div>
+  <div style="position:absolute;right:18px;bottom:18px;display:flex;flex-direction:column;gap:6px">
+    <button onClick="{{ zoomIn }}" aria-label="Aproximar" style="width:42px;height:42px;border-radius:10px;border:1px solid #2A2F2A;background:rgba(15,18,15,0.85);color:#FFF;font-size:20px;cursor:pointer;font-family:inherit">+</button>
+    <button onClick="{{ zoomOut }}" aria-label="Afastar" style="width:42px;height:42px;border-radius:10px;border:1px solid #2A2F2A;background:rgba(15,18,15,0.85);color:#FFF;font-size:20px;cursor:pointer;font-family:inherit">−</button>
+    <button onClick="{{ reset }}" aria-label="Vista geral" title="Vista geral" style="width:42px;height:42px;border-radius:10px;border:1px solid #2A2F2A;background:rgba(15,18,15,0.85);cursor:pointer;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#FFF" stroke-width="1.5"><path d="M1 5V1h4M11 1h4v4M15 11v4h-4M5 15H1v-4"></path></svg></button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1000,&quot;height&quot;:640},&quot;chapels&quot;:{&quot;editor&quot;:null,&quot;default&quot;:[],&quot;tsType&quot;:&quot;Array&lt;{id:number,num:number,name:string,padroeiro:string,zona:string,localidade:string,lat:number,lng:number,cover:string}&gt;&quot;},&quot;onOpen&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(id:number)=&gt;void&quot;},&quot;focusId&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;number&quot;},&quot;radius&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;0px&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const W = 1000, H = 640;
+const ZC = { urbana: '#6E9BD0', rural: '#D98B5B', distrital: '#8DBF98' };
+const ZL = { urbana: 'Urbana', rural: 'Rural', distrital: 'Distrital' };
+const proj = (lat, lng) => [(lng + 38.215) / 0.2 * W, (-7.75 - lat) / 0.19 * H];
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const PEAK = proj(-7.842, -38.104);
+const blob = (cx, cy, r, k, amp = 0.16, n = 64) => {
+  let d = '';
+  for (let i = 0; i <= n; i++) {
+    const t = i / n * Math.PI * 2;
+    const rr = r * (1 + amp * Math.sin(3 * t + k) + amp * 0.6 * Math.sin(5 * t + k * 1.7) + amp * 0.35 * Math.sin(9 * t + k * 0.6));
+    d += (i ? 'L' : 'M') + (cx + Math.cos(t) * rr * 1.25).toFixed(1) + ' ' + (cy + Math.sin(t) * rr).toFixed(1);
+  }
+  return d + 'Z';
+};
+const CONTOURS = Array.from({ length: 13 }, (_, i) => ({ d: blob(PEAK[0] + i * 6, PEAK[1] - i * 3, 26 + i * 36, i * 0.55, 0.12 + i * 0.008), major: i % 4 === 0 }));
+const RIDGE2 = Array.from({ length: 5 }, (_, i) => blob(840, 150, 20 + i * 26, 2 + i * 0.7, 0.14));
+const RIDGE3 = Array.from({ length: 5 }, (_, i) => blob(170, 520, 18 + i * 28, 4 + i * 0.5, 0.15));
+
+class Component extends DCLogic {
+  state = { z: 1, tx: 0, ty: 0, zone: 'todas', sel: null, hover: null, drag: false };
+
+  componentDidUpdate(prev) {
+    if (this.props.focusId && this.props.focusId !== prev.focusId) {
+      const c = (this.props.chapels || []).find(x => x.id === this.props.focusId);
+      if (c) this.focus(c);
+    }
+  }
+  componentWillUnmount() { if (this.svgEl) this.svgEl.removeEventListener('wheel', this.onWheel); }
+
+  svgRef = el => {
+    if (this.svgEl) this.svgEl.removeEventListener('wheel', this.onWheel);
+    this.svgEl = el;
+    if (el) el.addEventListener('wheel', this.onWheel, { passive: false });
+  };
+  toView(e) {
+    const r = this.svgEl.getBoundingClientRect(), s = Math.min(r.width / W, r.height / H);
+    const ox = (r.width - W * s) / 2, oy = (r.height - H * s) / 2;
+    return [(e.clientX - r.left - ox) / s, (e.clientY - r.top - oy) / s, s];
+  }
+  bound(z, tx, ty) {
+    const m = 120;
+    return { z, tx: clamp(tx, W - W * z - m, m), ty: clamp(ty, H - H * z - m, m) };
+  }
+  zoomAt(px, py, z1) {
+    const { z, tx, ty } = this.state; z1 = clamp(z1, 1, 5);
+    const vx = (px - tx) / z, vy = (py - ty) / z;
+    this.setState(this.bound(z1, px - vx * z1, py - vy * z1));
+  }
+  onWheel = e => {
+    e.preventDefault();
+    const [x, y] = this.toView(e);
+    this.zoomAt(x, y, this.state.z * (e.deltaY < 0 ? 1.18 : 1 / 1.18));
+  };
+  onDown = e => {
+    if (e.button !== 0) return;
+    this.dragStart = { x: e.clientX, y: e.clientY, tx: this.state.tx, ty: this.state.ty };
+    this.moved = false;
+  };
+  onMove = e => {
+    if (!this.dragStart) return;
+    const [, , s] = this.toView(e);
+    const dx = (e.clientX - this.dragStart.x) / s, dy = (e.clientY - this.dragStart.y) / s;
+    if (!this.moved && Math.hypot(dx, dy) < 4) return;
+    this.moved = true;
+    this.setState({ drag: true, ...this.bound(this.state.z, this.dragStart.tx + dx, this.dragStart.ty + dy) });
+  };
+  onUp = () => { this.dragStart = null; if (this.state.drag) this.setState({ drag: false }); };
+
+  fit(pts, maxZ = 3) {
+    if (!pts.length) return this.setState({ z: 1, tx: 0, ty: 0 });
+    const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const z = clamp(Math.min(W / (x1 - x0 + 260), H / (y1 - y0 + 220)), 1, maxZ);
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    this.setState(this.bound(z, W / 2 - cx * z, H / 2 - cy * z));
+  }
+  focus(c) {
+    const [x, y] = proj(c.lat, c.lng), z = Math.max(this.state.z, 2.6);
+    this.setState({ sel: c.id, ...this.bound(z, W / 2 - x * z, H / 2 - y * z + 40) });
+  }
+  setZone(zone) {
+    const list = (this.props.chapels || []).filter(c => zone === 'todas' || c.zona === zone);
+    this.setState({ zone, sel: null });
+    if (zone === 'todas') this.setState({ z: 1, tx: 0, ty: 0 }); else this.fit(list.map(c => proj(c.lat, c.lng)));
+  }
+
+  renderMap() {
+    const h = React.createElement, s = this.state, chapels = this.props.chapels || [];
+    const P = chapels.map(c => ({ c, p: proj(c.lat, c.lng), on: s.zone === 'todas' || c.zona === s.zone }));
+    const sede = P.filter(x => x.c.zona === 'urbana');
+    const sc = sede.length ? [sede.reduce((a, x) => a + x.p[0], 0) / sede.length, sede.reduce((a, x) => a + x.p[1], 0) / sede.length] : PEAK;
+    const clusters = {};
+    P.forEach(x => { const k = x.c.zona === 'distrital' ? 'distrital|' + x.c.localidade : x.c.zona; (clusters[k] = clusters[k] || []).push(x); });
+    const regions = Object.entries(clusters).filter(([k]) => k !== 'rural').map(([k, xs], i) => {
+      const z = k.split('|')[0], cx = xs.reduce((a, x) => a + x.p[0], 0) / xs.length, cy = xs.reduce((a, x) => a + x.p[1], 0) / xs.length;
+      const r = Math.max(34, ...xs.map(x => Math.hypot(x.p[0] - cx, x.p[1] - cy))) + 26;
+      const label = z === 'urbana' ? 'TRIUNFO · SEDE' : k.split('|')[1].replace('Distrito de ', '').toUpperCase();
+      return { z, cx, cy, r, label, on: s.zone === 'todas' || s.zone === z, k: i };
+    });
+    const inv = 1 / s.z, tr = s.drag ? 'none' : 'transform .75s cubic-bezier(.2,.75,.2,1)';
+    const ring = this.props.compact ? 0 : 0;
+    const roads = P.map(({ c, p, on }, i) => {
+      const mx = (sc[0] + p[0]) / 2 + (i % 2 ? 1 : -1) * 0.18 * (p[1] - sc[1]), my = (sc[1] + p[1]) / 2 - (i % 2 ? 1 : -1) * 0.18 * (p[0] - sc[0]);
+      const major = c.zona === 'distrital';
+      return h('path', { key: 'r' + c.id, d: `M${sc[0]} ${sc[1]} Q${mx} ${my} ${p[0]} ${p[1]}`, fill: 'none', stroke: major ? '#5A4A3A' : '#3A3A33', strokeWidth: major ? 3.2 : 1.6, strokeDasharray: major ? null : '2 5', strokeLinecap: 'round', opacity: on ? 1 : 0.3, vectorEffect: 'non-scaling-stroke' });
+    });
+    const showNames = s.z >= 1.9;
+    const front = s.sel || s.hover;
+    const pins = [...P].sort((a, b) => (a.c.id === front) - (b.c.id === front)).map(({ c, p, on }) => {
+      const col = ZC[c.zona], act = c.id === s.sel || c.id === s.hover, card = c.id === front;
+      const kids = [
+        h('circle', { key: 'g', r: act ? 26 : 18, fill: col, opacity: act ? 0.3 : 0.14, style: { transition: 'all .3s' } }),
+        h('circle', { key: 'p', r: act ? 13 : 10.5, fill: col, stroke: '#FFF', strokeWidth: 2.5, style: { transition: 'all .3s' } }),
+        h('text', { key: 't', y: 3.6, textAnchor: 'middle', fontSize: 10, fontWeight: 800, fill: '#0F120F', style: { pointerEvents: 'none', fontFamily: "'Plus Jakarta Sans',sans-serif" } }, c.num)
+      ];
+      if (showNames && !card) kids.push(h('text', { key: 'n', x: 18, y: 4, fontSize: 11.5, fontWeight: 600, fill: '#E9EDE9', stroke: '#0F120F', strokeWidth: 4, paintOrder: 'stroke', style: { pointerEvents: 'none', fontFamily: "'Plus Jakarta Sans',sans-serif" } }, c.name.replace(/^Capela (de |do |da )?/, '')));
+      return h('g', {
+        key: c.id, style: { transform: `translate(${p[0]}px, ${p[1]}px)`, opacity: on ? 1 : 0.18, pointerEvents: on ? 'auto' : 'none', cursor: 'pointer', transition: 'opacity .4s' },
+        onMouseEnter: () => this.setState({ hover: c.id }), onMouseLeave: () => this.setState({ hover: null }),
+        onClick: e => { e.stopPropagation(); if (this.moved) return; if (s.sel === c.id) { this.props.onOpen && this.props.onOpen(c.id); } else this.focus(c); }
+      }, h('g', { style: { transform: `scale(${inv})`, transition: tr } }, kids));
+    });
+    const txt = (x, y, t, o = {}) => h('text', { key: t + x, x, y, textAnchor: 'middle', fill: o.fill || '#5E665F', fontSize: o.size || 11, fontWeight: o.w || 700, letterSpacing: o.ls ?? 3, fontStyle: o.italic ? 'italic' : 'normal', style: { fontFamily: "'Plus Jakarta Sans',sans-serif", pointerEvents: 'none' } }, t);
+    return h('svg', {
+      ref: this.svgRef, viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: 'xMidYMid meet',
+      style: { width: '100%', height: '100%', display: 'block', cursor: s.drag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none' },
+      onPointerDown: this.onDown, onPointerMove: this.onMove, onPointerUp: this.onUp, onPointerLeave: this.onUp,
+      onClick: () => { if (!this.moved && s.sel) this.setState({ sel: null }); }
+    },
+      h('defs', null,
+        h('radialGradient', { id: 'mPeak' }, h('stop', { offset: 0, stopColor: '#2A3A2E', stopOpacity: 0.9 }), h('stop', { offset: 1, stopColor: '#0F120F', stopOpacity: 0 })),
+        h('style', null, '@keyframes mapPop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}')
+      ),
+      h('rect', { x: -2000, y: -2000, width: 5000, height: 5000, fill: '#0F120F' }),
+      h('g', { style: { transform: `translate(${s.tx}px, ${s.ty}px) scale(${s.z})`, transformOrigin: '0 0', transition: tr } },
+        h('ellipse', { cx: PEAK[0], cy: PEAK[1], rx: 520, ry: 380, fill: 'url(#mPeak)' }),
+        RIDGE2.map((d, i) => h('path', { key: 'a' + i, d, fill: 'none', stroke: '#222A23', strokeWidth: 1, vectorEffect: 'non-scaling-stroke' })),
+        RIDGE3.map((d, i) => h('path', { key: 'b' + i, d, fill: 'none', stroke: '#222A23', strokeWidth: 1, vectorEffect: 'non-scaling-stroke' })),
+        CONTOURS.map((c, i) => h('path', { key: 'c' + i, d: c.d, fill: 'none', stroke: c.major ? '#34413A' : '#232B25', strokeWidth: c.major ? 1.4 : 1, vectorEffect: 'non-scaling-stroke' })),
+        h('path', { d: 'M-40 600 C 160 560, 260 610, 420 590 S 700 640, 1040 600', fill: 'none', stroke: '#22333B', strokeWidth: 3, vectorEffect: 'non-scaling-stroke' }),
+        regions.map(r => h('path', { key: 'g' + r.k, d: blob(r.cx, r.cy, r.r, r.k + 1, 0.1), fill: ZC[r.z], fillOpacity: r.on ? 0.1 : 0.03, stroke: ZC[r.z], strokeOpacity: r.on ? 0.55 : 0.15, strokeWidth: 1.2, strokeDasharray: '5 6', vectorEffect: 'non-scaling-stroke' })),
+        roads,
+        regions.map(r => txt(r.cx, r.cy - r.r * 1.0 - 10, r.label, { fill: r.on ? ZC[r.z] : '#3A423C', size: 10.5, ls: 3 })),
+        txt(PEAK[0] + 40, PEAK[1] + 150, 'Serra da Baixa Verde', { italic: true, w: 500, size: 13, ls: 1.5, fill: '#4F5A52' }),
+        h('g', { transform: 'translate(920 70)' },
+          h('path', { d: 'M0 -26 L7 0 L0 -6 L-7 0 Z', fill: '#C9A45C' }), h('path', { d: 'M0 26 L7 0 L0 6 L-7 0 Z', fill: '#3A423C' }),
+          txt(0, -34, 'N', { fill: '#C9A45C', size: 11, ls: 0 })),
+        h('g', { transform: 'translate(820 610)' },
+          h('path', { d: 'M0 0 H95', stroke: '#5E665F', strokeWidth: 2 }), h('path', { d: 'M0 -5 V5 M95 -5 V5', stroke: '#5E665F', strokeWidth: 2 }),
+          txt(47, -10, '2 km', { size: 10, ls: 1 })),
+        pins
+      )
+    );
+  }
+
+  rootRef = el => {
+    if (this.ro) { this.ro.disconnect(); this.ro = null; }
+    if (el && window.ResizeObserver) {
+      this.ro = new ResizeObserver(([e]) => { const { width, height } = e.contentRect; if (width !== this.state.cw || height !== this.state.ch) this.setState({ cw: width, ch: height }); });
+      this.ro.observe(el);
+    }
+  };
+  cardVals() {
+    const s = this.state, id = s.sel || s.hover, c = (this.props.chapels || []).find(x => x.id === id);
+    if (!c || !s.cw) return null;
+    const sc = Math.min(s.cw / W, s.ch / H), ox = (s.cw - W * sc) / 2, oy = (s.ch - H * sc) / 2;
+    const [px, py] = proj(c.lat, c.lng);
+    const TXT = { urbana: '#2F5F95', rural: '#A4532A', distrital: '#3E7350' };
+    return {
+      left: (ox + (s.tx + px * s.z) * sc) + 'px', top: (oy + (s.ty + py * s.z) * sc) + 'px',
+      tr: s.drag ? 'none' : 'left .75s cubic-bezier(.2,.75,.2,1), top .75s cubic-bezier(.2,.75,.2,1)',
+      cover: c.cover, name: c.name, padroeiro: c.padroeiro, meta: 'Nº ' + String(c.num).padStart(2, '0') + ' · ' + ZL[c.zona], metaColor: TXT[c.zona],
+      cta: s.sel === c.id ? 'Abrir ficha completa →' : 'Clique para aproximar',
+      open: e => { e.stopPropagation(); this.props.onOpen && this.props.onOpen(c.id); }
+    };
+  }
+  renderVals() {
+    const s = this.state;
+    const card = this.cardVals();
+    const chips = [['todas', 'Todas', '#C9A45C'], ['urbana', 'Urbana', ZC.urbana], ['rural', 'Rural', ZC.rural], ['distrital', 'Distrital', ZC.distrital]].map(([k, l, d]) => {
+      const on = s.zone === k;
+      return { label: l, dot: d, onClick: () => this.setZone(k), bg: on ? '#FFF' : 'rgba(15,18,15,0.7)', color: on ? '#141614' : '#FFF', border: on ? '#FFF' : '#2F352F' };
+    });
+    return {
+      mapSvg: this.renderMap(), chips, rootRef: this.rootRef, hasCard: !!card, card: card || {}, radius: this.props.radius ?? '0px',
+      hint: s.z > 1.05 ? 'Arraste para mover · clique no pino para ver a capela' : 'Role ou use + para aproximar · arraste para mover',
+      zoomIn: () => this.zoomAt(W / 2, H / 2, s.z * 1.4),
+      zoomOut: () => this.zoomAt(W / 2, H / 2, s.z / 1.4),
+      reset: () => this.setState({ z: 1, tx: 0, ty: 0, sel: null, zone: 'todas' })
+    };
+  }
+}
+</script>
+</body>
+</html>

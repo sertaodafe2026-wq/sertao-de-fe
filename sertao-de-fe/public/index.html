@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Sertão de Fé — O patrimônio das capelas de Triunfo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+html,body{margin:0;background:#FFFFFF;color:#141614;font-family:'Plus Jakarta Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#E3E7E3;text-decoration:underline;text-underline-offset:3px}a:hover{color:#FFFFFF}
+button{font-family:inherit}
+input,select,textarea{font-family:inherit;font-size:15px;color:#141614}
+@keyframes sfFade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</helmet>
+
+<sc-if value="{{ isPublic }}" hint-placeholder-val="{{ true }}">
+<div style="zoom: {{ zoom }}; filter: {{ filter }}; min-height:100vh;background:#0F120F;color:#FFF">
+
+  <header style="position:sticky;top:0;z-index:500;background:rgba(15,18,15,0.92);backdrop-filter:blur(10px);border-bottom:1px solid #1F241F">
+    <div style="max-width:1320px;margin:0 auto;padding:0 28px;height:64px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px">
+      <nav style="display:flex;gap:2px;flex-wrap:wrap">
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="3">
+          <button onClick="{{ n.onClick }}" style="background:none;border:0;padding:8px 12px;font-size:12px;font-weight:500;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:inherit;color: {{ n.color }};box-shadow:inset 0 -1px 0 {{ n.line }}">{{ n.label }}</button>
+        </sc-for>
+      </nav>
+      <button onClick="{{ goHome }}" style="display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;color:#FFF;font-family:inherit">
+        <svg width="11" height="15" viewBox="0 0 18 24" fill="none" stroke="#FFF" stroke-width="2"><path d="M9 1v22M2 7h14"></path></svg>
+        <span style="font-size:15px;font-weight:700;letter-spacing:4px;white-space:nowrap">SERTÃO DE FÉ</span>
+      </button>
+      <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end">
+        <button onClick="{{ toggleBig }}" title="Aumentar fonte" style="width:36px;height:36px;border-radius:999px;border:1px solid #2A2F2A;background: {{ bigBg }};cursor:pointer;font-weight:700;font-size:12px;color:#FFF;font-family:inherit">A+</button>
+        <button onClick="{{ toggleContrast }}" title="Alto contraste" style="width:36px;height:36px;border-radius:999px;border:1px solid #2A2F2A;background: {{ conBg }};cursor:pointer;display:grid;place-items:center"><svg width="15" height="15" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="#FFF" stroke-width="1.4"></circle><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="#FFF"></path></svg></button>
+        <button onClick="{{ goSearch }}" title="Buscar" style="width:36px;height:36px;border-radius:999px;border:1px solid #2A2F2A;background:transparent;cursor:pointer;display:grid;place-items:center"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#FFF" stroke-width="1.5"><circle cx="7" cy="7" r="5"></circle><path d="M11 11l3.5 3.5"></path></svg></button>
+        <button onClick="{{ goAdmin }}" style="height:36px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,0.7);background:transparent;color:#FFF;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Área da equipe</button>
+      </div>
+    </div>
+  </header>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <section data-screen-label="Início — Abertura" style="position:relative;height:calc(100vh - 64px);min-height:600px;max-height:940px;overflow:hidden;background:#0F120F;color:#FFF">
+      <x-import component-from-global-scope="HeroAbertura" from="./abertura.jsx" on-end="{{ onIntroEnd }}" play-key="{{ introKey }}" skip="{{ introSkip }}" hint-size="100%,100%" style="position:absolute;inset:0"></x-import>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,18,15,0.72) 0%,rgba(15,18,15,0.25) 38%,rgba(15,18,15,0.35) 62%,rgba(15,18,15,0.92) 100%);pointer-events:none"></div>
+      <div style="position:relative;height:100%;max-width:1320px;margin:0 auto;padding:56px 28px 48px;display:flex;flex-direction:column;justify-content:space-between">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:28px;flex-wrap:wrap">
+          <div>
+            <h1 style="font-size:clamp(60px,10vw,148px);font-weight:600;line-height:1.08;letter-spacing:-2px;text-transform:uppercase;margin:0">
+              <span style="display:block;color:#A3AAA4">Sertão</span>
+              <span style="display:block;color:#FFF">de Fé</span>
+            </h1>
+            <p style="font-size:15px;line-height:1.6;margin:36px 0 0;max-width:300px;color:#E3E7E3">O patrimônio das capelas de Triunfo, no sertão de Pernambuco.</p>
+          </div>
+          <p style="font-size:14px;line-height:1.65;color:#E3E7E3;max-width:280px;text-align:right;margin:8px 0 0;font-style:italic">“Onde a seca molha a alma e a fé faz florescer esperança”</p>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <button onClick="{{ goCapelas }}" style="display:flex;align-items:center;gap:10px;padding:13px 22px;border-radius:999px;border:1px solid rgba(255,255,255,0.8);background:rgba(15,18,15,0.35);color:#FFF;font-weight:500;font-size:14px;cursor:pointer;font-family:inherit;backdrop-filter:blur(6px)">Explorar as capelas <span>→</span></button>
+            <button onClick="{{ goMapa }}" style="display:flex;align-items:center;gap:10px;padding:13px 22px;border-radius:999px;border:1px solid rgba(255,255,255,0.35);background:rgba(15,18,15,0.35);color:#FFF;font-weight:500;font-size:14px;cursor:pointer;font-family:inherit;backdrop-filter:blur(6px)">Ver no mapa <span>→</span></button>
+          </div>
+          <button onClick="{{ scrollDown }}" style="display:flex;align-items:center;gap:10px;background:none;border:0;border-bottom:1px solid #FFF;padding:6px 0 8px;color:#FFF;font-size:13px;cursor:pointer;font-family:inherit;min-width:160px;justify-content:space-between">Começar <span>↓</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section ref="{{ afterHeroRef }}" data-screen-label="Início — Destaques" style="position:relative;background:#0F120F;color:#FFF;overflow:hidden">
+      <div style="position:absolute;left:-14px;bottom:40px;font-size:clamp(110px,15vw,220px);font-weight:800;letter-spacing:8px;color:#191D19;line-height:1;pointer-events:none;white-space:nowrap">CAPELAS</div>
+      <div style="position:relative;max-width:1320px;margin:0 auto;padding:104px 28px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:48px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:22px;max-width:480px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="width:40px;height:1px;background:#9AA39C"></span><span style="font-size:12px;color:#B8C0B9;white-space:nowrap">Capelas em destaque · {{ fe.pos }}</span></div>
+            <h2 style="font-size:clamp(28px,3vw,40px);font-weight:500;line-height:1.12;letter-spacing:-0.3px;text-transform:uppercase;margin:0;text-wrap:pretty">{{ fe.name }}</h2>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:#B8C0B9">
+              <span style="white-space:nowrap">Nº {{ fe.numStr }}</span><span>·</span>
+              <span style="display:flex;align-items:center;gap:6px;white-space:nowrap"><span style="width:7px;height:7px;border-radius:50%;background: {{ fe.pinColor }}"></span>Zona {{ fe.zoneLabel }}</span><span>·</span>
+              <span>{{ fe.padroeiro }}</span>
+            </div>
+            <p style="font-size:14.5px;line-height:1.75;color:#B8C0B9;margin:0;text-wrap:pretty">{{ fe.excerpt }}</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #262B26">
+              <sc-for list="{{ fe.facts }}" as="f" hint-placeholder-count="4">
+                <div style="padding:13px 0;border-bottom:1px solid #262B26">
+                  <div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#8E968F;margin-bottom:4px">{{ f.k }}</div>
+                  <div style="font-size:14px;font-weight:500">{{ f.v }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+              <button onClick="{{ fe.open }}" style="display:flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;border:1px solid rgba(255,255,255,0.8);background:none;color:#FFF;font-weight:500;font-size:14px;cursor:pointer;font-family:inherit">Ver ficha completa <span>→</span></button>
+              <button onClick="{{ featPrev }}" aria-label="Capela anterior" style="width:44px;height:44px;border-radius:999px;border:1px solid #2F352F;background:none;cursor:pointer;display:grid;place-items:center"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#FFF" stroke-width="1.5"><path d="M10 3L5 8l5 5"></path></svg></button>
+              <button onClick="{{ featNext }}" aria-label="Próxima capela" style="width:44px;height:44px;border-radius:999px;border:1px solid #2F352F;background:none;cursor:pointer;display:grid;place-items:center"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#FFF" stroke-width="1.5"><path d="M6 3l5 5-5 5"></path></svg></button>
+            </div>
+          </div>
+          <div>
+            <div style="position:relative;aspect-ratio:4/3;background:#1B1F1B;overflow:hidden">
+              <img src="{{ fe.src }}" alt="{{ fe.alt }}" onClick="{{ fe.expand }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;cursor:zoom-in">
+              <button onClick="{{ fe.photoPrev }}" aria-label="Foto anterior" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:999px;border:0;background:rgba(15,18,15,0.55);cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(6px)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#FFF" stroke-width="1.6"><path d="M10 3L5 8l5 5"></path></svg></button>
+              <button onClick="{{ fe.photoNext }}" aria-label="Próxima foto" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:999px;border:0;background:rgba(15,18,15,0.55);cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(6px)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#FFF" stroke-width="1.6"><path d="M6 3l5 5-5 5"></path></svg></button>
+              <button onClick="{{ fe.expand }}" aria-label="Ampliar fotos" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;border:0;background:rgba(255,255,255,0.82);cursor:pointer;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="#141614" stroke-width="1.4"><path d="M1 4V1h3M8 1h3v3M11 8v3H8M4 11H1V8"></path></svg></button>
+              <div style="position:absolute;left:0;right:0;bottom:16px;display:flex;justify-content:center;gap:6px">
+                <sc-for list="{{ fe.dots }}" as="d" hint-placeholder-count="4"><span style="width: {{ d.w }};height:3px;border-radius:2px;background:#FFF;opacity: {{ d.op }};transition:all .3s"></span></sc-for>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:14px;overflow-x:auto;scrollbar-width:none;padding:3px">
+              <sc-for list="{{ featThumbs }}" as="t" hint-placeholder-count="8">
+                <button onClick="{{ t.onClick }}" title="{{ t.name }}" style="flex:0 0 84px;height:60px;padding:0;border:0;background:none;cursor:pointer;opacity: {{ t.op }};transition:opacity .25s">
+                  <img src="{{ t.cover }}" alt="" style="width:84px;height:60px;object-fit:cover;display:block;outline:1px solid {{ t.ring }};outline-offset:2px">
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="Início — Rotas" style="background:#0F120F;color:#FFF;border-top:1px solid #1C201C">
+      <div style="max-width:1320px;margin:0 auto;padding:104px 28px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap;margin-bottom:44px">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px"><span style="width:40px;height:1px;background:#9AA39C"></span><span style="font-size:12px;color:#B8C0B9;white-space:nowrap">Rotas da fé</span></div>
+            <h2 style="font-size:clamp(32px,3.8vw,50px);font-weight:500;line-height:1.08;letter-spacing:-0.5px;text-transform:uppercase;margin:0">Três caminhos<br>pelo sertão</h2>
+          </div>
+          <p style="font-size:14px;line-height:1.7;color:#B8C0B9;max-width:380px;text-align:right;margin:0">As capelas estão divididas em três rotas: a urbana, na sede do município, a rural, nos sítios da serra, e a distrital, em Jericó e Canaã.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px">
+          <sc-for list="{{ rotas }}" as="r" hint-placeholder-count="3">
+            <button onClick="{{ r.onClick }}" style="border:0;background:none;padding:0;cursor:pointer;text-align:left;color:#FFF;font-family:inherit">
+              <div style="position:relative;aspect-ratio:4/5;overflow:hidden;background:#1B1F1B">
+                <img src="{{ r.img }}" alt="" style="width:100%;height:100%;object-fit:cover;filter:saturate(0.85);transition:transform .6s" style-hover="transform:scale(1.04)">
+                <span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:10px;padding:11px 20px;border-radius:999px;border:1px solid rgba(255,255,255,0.75);background:rgba(15,18,15,0.4);font-size:13px;white-space:nowrap;backdrop-filter:blur(6px)">Ver capelas <span>→</span></span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:16px">
+                <span style="font-size:16px;font-weight:500;text-transform:uppercase;letter-spacing:0.3px">{{ r.label }}</span>
+                <span style="font-size:15px;font-weight:500">{{ r.count }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:#8E968F;margin-top:4px"><span style="width:7px;height:7px;border-radius:50%;background: {{ r.dot }}"></span>capelas nesta rota</div>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:80px;border-top:1px solid #262B26">
+          <div style="padding:26px 0;border-bottom:1px solid #262B26"><div style="font-size:44px;font-weight:300">20</div><div style="font-size:12px;color:#8E968F;margin-top:4px">Capelas mapeadas</div></div>
+          <div style="padding:26px 0;border-bottom:1px solid #262B26"><div style="font-size:44px;font-weight:300">3</div><div style="font-size:12px;color:#8E968F;margin-top:4px">Zonas do município</div></div>
+          <div style="padding:26px 0;border-bottom:1px solid #262B26"><div style="font-size:44px;font-weight:300">2</div><div style="font-size:12px;color:#8E968F;margin-top:4px">Formatos de catálogo</div></div>
+          <div style="padding:26px 0;border-bottom:1px solid #262B26"><div style="font-size:44px;font-weight:300">100%</div><div style="font-size:12px;color:#8E968F;margin-top:4px">Acesso gratuito</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="Início — Mapa afetivo" style="position:relative;background:#0F120F;color:#FFF;overflow:hidden">
+      <div style="position:absolute;left:-12px;top:150px;font-size:clamp(120px,17vw,250px);font-weight:800;letter-spacing:10px;color:#171B17;line-height:1;pointer-events:none;white-space:nowrap">TRIUNFO</div>
+      <div style="position:relative;max-width:1320px;margin:0 auto;padding:104px 28px 96px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap;margin-bottom:44px">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px"><span style="width:40px;height:1px;background:#9AA39C"></span><span style="font-size:12px;color:#B8C0B9;white-space:nowrap">Mapa afetivo</span></div>
+            <h2 style="font-size:clamp(32px,3.8vw,50px);font-weight:500;line-height:1.08;letter-spacing:-0.5px;text-transform:uppercase;margin:0">Onde fica<br>cada capela</h2>
+          </div>
+          <p style="font-size:14px;line-height:1.7;color:#B8C0B9;max-width:380px;text-align:right;margin:0">Clique em um pino para aproximar e ver a capela. Clique de novo para abrir a ficha completa. Arraste e role para explorar a serra.</p>
+        </div>
+        <div style="height:clamp(460px,56vw,700px);border-radius:16px;overflow:hidden;border:1px solid #232823">
+          <dc-import name="Mapa Afetivo" chapels="{{ mapChapels }}" on-open="{{ onMapOpen }}" radius="16px" hint-size="100%,100%"></dc-import>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:22px">
+          <button onClick="{{ goMapa }}" style="background:none;border:0;border-bottom:1px solid #FFF;padding:6px 0;color:#FFF;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit">Abrir mapa com a lista de capelas →</button>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="Início — Vozes" style="background:#151815;color:#FFF">
+      <div style="max-width:1320px;margin:0 auto;padding:104px 28px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:48px;align-items:center;margin-bottom:56px">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px"><span style="width:40px;height:1px;background:#9AA39C"></span><span style="font-size:12px;color:#B8C0B9;white-space:nowrap">Vozes dos guardiões</span></div>
+            <h2 style="font-size:clamp(32px,3.8vw,50px);font-weight:500;line-height:1.08;letter-spacing:-0.5px;text-transform:uppercase;margin:0 0 20px">Quem guarda<br>a tradição</h2>
+            <p style="font-size:15px;line-height:1.75;color:#B8C0B9;max-width:420px;margin:0">Moradores que cuidam das chaves, das festas e das histórias de cada capela contam, com a própria voz, como a fé atravessa gerações no sertão.</p>
+          </div>
+          <button onClick="{{ voz0.play }}" style="position:relative;aspect-ratio:4/3;border:0;padding:0;cursor:pointer;overflow:hidden;background:#222">
+            <img src="img/c58.jpg" alt="Guardiã sendo entrevistada dentro da capela" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.85">
+            <span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,0.88);display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 12 12" fill="#141614"><path d="M3 1.5l7.5 4.5L3 10.5z"></path></svg></span>
+          </button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+          <sc-for list="{{ vozes }}" as="v" hint-placeholder-count="3">
+            <div style="border-top:1px solid #2E332E;padding-top:24px;display:flex;flex-direction:column;gap:18px">
+              <p style="font-size:18px;line-height:1.55;margin:0;flex:1;text-wrap:pretty">“{{ v.quote }}”</p>
+              <div style="display:flex;gap:12px;align-items:center">
+                <img src="{{ v.img }}" alt="{{ v.name }}" style="width:44px;height:44px;border-radius:50%;object-fit:cover">
+                <div style="min-width:0"><div style="font-weight:700;font-size:14px">{{ v.name }}</div><div style="font-size:12px;color:#9AA39C">{{ v.role }}</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <button onClick="{{ v.play }}" aria-label="Ouvir" style="width:36px;height:36px;flex:none;border-radius:999px;border:1px solid #C9A45C;background:none;cursor:pointer;display:grid;place-items:center">
+                  <sc-if value="{{ v.playing }}" hint-placeholder-val="{{ false }}"><svg width="11" height="11" viewBox="0 0 12 12" fill="#C9A45C"><rect x="2" y="1" width="3" height="10"></rect><rect x="7" y="1" width="3" height="10"></rect></svg></sc-if>
+                  <sc-if value="{{ v.paused }}" hint-placeholder-val="{{ true }}"><svg width="11" height="11" viewBox="0 0 12 12" fill="#C9A45C"><path d="M3 1l8 5-8 5z"></path></svg></sc-if>
+                </button>
+                <div style="flex:1;height:2px;background:#2E332E;overflow:hidden"><div style="height:100%;width: {{ v.pct }};background:#C9A45C;transition:width .25s linear"></div></div>
+                <span style="font-size:12px;color:#9AA39C;font-variant-numeric:tabular-nums">{{ v.time }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="Início — Catálogo" style="position:relative;background:#0F120F;color:#FFF;overflow:hidden">
+      <img src="img/c12.jpg" alt="" style="position:absolute;right:0;top:0;width:62%;height:100%;object-fit:cover;opacity:0.75">
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg,#0F120F 38%,rgba(15,18,15,0.55) 70%,rgba(15,18,15,0.25) 100%)"></div>
+      <div style="position:relative;max-width:1320px;margin:0 auto;padding:120px 28px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px"><span style="width:40px;height:1px;background:#9AA39C"></span><span style="font-size:12px;color:#B8C0B9;white-space:nowrap">Catálogo digital</span></div>
+        <h2 style="font-size:clamp(38px,5vw,68px);font-weight:500;line-height:1.02;letter-spacing:-1px;text-transform:uppercase;margin:0 0 24px">Leia o<br>catálogo<br>completo</h2>
+        <p style="font-size:15px;line-height:1.75;color:#C9CFCA;max-width:400px;margin:0 0 34px">Ensaios fotográficos, fichas técnicas e microhistórias das 20 capelas, em PDF interativo e ePub, com texto alternativo em todas as imagens.</p>
+        <div style="display:flex;gap:28px;flex-wrap:wrap">
+          <button style="background:none;border:0;border-bottom:1px solid #FFF;padding:6px 0;color:#FFF;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit">Baixar PDF →</button>
+          <button style="background:none;border:0;border-bottom:1px solid #FFF;padding:6px 0;color:#FFF;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit">Ler em flipbook →</button>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ isCapelas }}" hint-placeholder-val="{{ false }}">
+    <section data-screen-label="Capelas — Galeria" style="max-width:1320px;margin:0 auto;padding:64px 28px 104px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px"><span style="width:40px;height:1px;background:#9AA39C"></span><span style="font-size:12px;color:#B8C0B9;white-space:nowrap">Galeria completa</span></div>
+      <h1 style="font-size:clamp(40px,5.4vw,76px);font-weight:600;line-height:0.98;letter-spacing:-1px;text-transform:uppercase;margin:0 0 16px"><span style="color:#A3AAA4">As capelas</span><br>de Triunfo</h1>
+      <p style="font-size:16px;color:#9AA39C;margin:0 0 36px">Clique na foto para ampliar. Clique no nome para abrir a ficha.</p>
+      <div style="position:sticky;top:64px;z-index:400;background:#0F120F;padding:14px 0;border-bottom:1px solid #232823;margin-bottom:36px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ galChips }}" as="z" hint-placeholder-count="4">
+            <button onClick="{{ z.onClick }}" style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid {{ z.border }};background: {{ z.bg }};color: {{ z.color }}"><span style="width:8px;height:8px;border-radius:50%;background: {{ z.dot }}"></span>{{ z.label }}</button>
+          </sc-for>
+        </div>
+        <div style="flex:1;min-width:220px;display:flex;align-items:center;gap:8px;background:#171A17;border:1px solid #2A2F2A;border-radius:999px;padding:0 16px">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#5B625D" stroke-width="1.5"><circle cx="7" cy="7" r="5"></circle><path d="M11 11l3.5 3.5"></path></svg>
+          <input ref="{{ searchRef }}" value="{{ search }}" onChange="{{ onSearch }}" placeholder="Buscar por nome, padroeiro ou localidade" style="flex:1;border:0;outline:none;background:none;padding:11px 0;color:#FFF">
+        </div>
+        <select value="{{ sort }}" onChange="{{ onSort }}" style="padding:10px 14px;border-radius:999px;border:1px solid #2A2F2A;background:#171A17;color:#FFF;cursor:pointer">
+          <option value="num">Nº do catálogo</option>
+          <option value="az">A–Z</option>
+          <option value="old">Mais antigas</option>
+          <option value="new">Mais recentes</option>
+        </select>
+        <div style="display:flex;border:1px solid #FFF;border-radius:999px;overflow:hidden;background:transparent">
+          <button style="padding:10px 16px;border:0;background:#FFF;color:#141614;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Grade</button>
+          <button onClick="{{ goMapa }}" style="padding:10px 16px;border:0;background:transparent;color:#FFF;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Mapa</button>
+        </div>
+      </div>
+      <div style="font-size:13px;color:#9AA39C;margin-bottom:22px;letter-spacing:0.5px">{{ galCount }}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:44px 24px">
+        <sc-for list="{{ galList }}" as="c" hint-placeholder-count="8">
+          <article>
+            <button onClick="{{ c.lightbox }}" style="position:relative;display:block;width:100%;aspect-ratio:3/4;border-radius:0;overflow:hidden;border:0;padding:0;cursor:zoom-in;background:#1B1F1B">
+              <img src="{{ c.cover }}" alt="{{ c.alt }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform .6s" style-hover="transform:scale(1.05)">
+              <span style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:6px;white-space:nowrap">
+                <span style="background:rgba(255,255,255,0.94);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color: {{ c.zoneColor }}">{{ c.zoneLabel }}</span>
+                <span style="background:rgba(255,255,255,0.94);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:700;color:#141614">{{ c.photoCount }} fotos</span>
+                <sc-if value="{{ c.hasVideo }}" hint-placeholder-val="{{ false }}"><span title="Vídeo" style="background:rgba(255,255,255,0.94);border-radius:999px;width:26px;height:24px;display:grid;place-items:center"><svg width="11" height="11" viewBox="0 0 12 12" fill="#141614"><path d="M3 1.5l7.5 4.5L3 10.5z"></path></svg></span></sc-if>
+              </span>
+            </button>
+            <button onClick="{{ c.open }}" style="display:block;width:100%;text-align:left;background:none;border:0;padding:16px 0 0;cursor:pointer;color:#FFF;font-family:inherit">
+              <div style="font-size:11px;letter-spacing:2px;font-weight:700;color:#8E968F">Nº {{ c.numStr }}</div>
+              <div style="font-size:16px;font-weight:500;text-transform:uppercase;letter-spacing:0.3px;line-height:1.35;margin:5px 0 4px" style-hover="text-decoration:underline">{{ c.name }}</div>
+              <div style="font-size:14px;color:#9AA39C">{{ c.padroeiro }} · {{ c.localidade }}</div>
+            </button>
+          </article>
+        </sc-for>
+      </div>
+      <sc-if value="{{ galEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;padding:80px 20px">
+          <div style="font-size:26px;font-weight:700;margin-bottom:14px">Nenhuma capela encontrada</div>
+          <button onClick="{{ clearFilters }}" style="padding:12px 24px;border-radius:6px;border:1px solid #FFF;background:none;color:#FFF;font-weight:700;cursor:pointer;font-family:inherit;border-radius:999px">Limpar filtros</button>
+        </div>
+      </sc-if>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ isMapa }}" hint-placeholder-val="{{ false }}">
+    <section data-screen-label="Mapa interativo" style="display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);height:calc(100vh - 65px);min-height:560px;background:#0F120F;color:#FFF">
+      <aside style="border-right:1px solid #232823;display:flex;flex-direction:column;min-height:0">
+        <div style="padding:26px 22px 18px;border-bottom:1px solid #232823">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span style="width:28px;height:1px;background:#9AA39C"></span><span style="font-size:12px;color:#B8C0B9;white-space:nowrap">Mapa afetivo</span></div>
+          <h1 style="font-size:28px;font-weight:500;text-transform:uppercase;letter-spacing:-0.3px;margin:0 0 6px;line-height:1.1">Capelas de Triunfo</h1>
+          <div style="font-size:13px;color:#9AA39C">{{ mapCount }}</div>
+        </div>
+        <div style="overflow-y:auto;flex:1">
+          <sc-for list="{{ mapList }}" as="c" hint-placeholder-count="8">
+            <button onClick="{{ c.focus }}" style="display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:12px 22px;border:0;border-bottom:1px solid #1C201C;cursor:pointer;color:#FFF;font-family:inherit;background: {{ c.rowBg }}">
+              <span style="width:26px;height:26px;flex:none;border-radius:50%;color:#0F120F;font-size:11px;font-weight:800;display:grid;place-items:center;background: {{ c.pinColor }}">{{ c.num }}</span>
+              <img src="{{ c.cover }}" alt="" style="width:44px;height:52px;border-radius:22px 22px 6px 6px;object-fit:cover;flex:none">
+              <span style="min-width:0"><span style="display:block;font-weight:700;font-size:14px;line-height:1.3">{{ c.name }}</span><span style="display:block;font-size:12px;color:#9AA39C">{{ c.localidade }}</span></span>
+            </button>
+          </sc-for>
+        </div>
+      </aside>
+      <div style="position:relative;min-height:0">
+        <dc-import name="Mapa Afetivo" chapels="{{ mapChapels }}" on-open="{{ onMapOpen }}" focus-id="{{ mapFocus }}" hint-size="100%,100%" style="position:absolute;inset:0"></dc-import>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ showFooter }}" hint-placeholder-val="{{ true }}">
+    <footer style="background:#0B0D0B;color:#FFF">
+      <div style="max-width:1320px;margin:0 auto;padding:56px 28px 28px;display:flex;flex-direction:column;align-items:center;gap:26px">
+        <div style="display:flex;align-items:center;gap:10px"><svg width="12" height="16" viewBox="0 0 18 24" fill="none" stroke="#FFF" stroke-width="2"><path d="M9 1v22M2 7h14"></path></svg><span style="font-size:15px;font-weight:800;letter-spacing:4px">SERTÃO DE FÉ</span></div>
+        <div style="display:flex;gap:28px;flex-wrap:wrap;justify-content:center;font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase">
+          <button onClick="{{ goCapelas }}" style="background:none;border:0;color:#FFF;cursor:pointer;font:inherit;letter-spacing:inherit">Capelas</button>
+          <button onClick="{{ goMapa }}" style="background:none;border:0;color:#FFF;cursor:pointer;font:inherit;letter-spacing:inherit">Mapa</button>
+          <a href="#/acessibilidade" style="color:#FFF">Acessibilidade</a>
+          <a href="#/contato" style="color:#FFF">Contato</a>
+        </div>
+        <div style="font-size:13px;color:#9AA39C;text-align:center">Apoio: Funcultura · Fundarpe · Secretaria de Cultura · Governo de Pernambuco</div>
+        <div style="width:100%;border-top:1px solid #232823;padding-top:18px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12px;color:#9AA39C">
+          <span>Protótipo · nomes, datas e coordenadas são ilustrativos até o levantamento final.</span>
+          <button onClick="{{ goAdmin }}" style="background:none;border:0;color:#9AA39C;font-size:12px;cursor:pointer;text-decoration:underline;font-family:inherit">Área da equipe</button>
+        </div>
+      </div>
+    </footer>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeDrawer }}" style="position:fixed;inset:0;background:rgba(43,38,32,0.32);z-index:900;animation:sfFade .25s"></div>
+  <aside data-screen-label="Ficha da capela" role="dialog" aria-label="{{ d.name }}" style="position:fixed;top:0;right:0;bottom:0;width:min(580px,100%);background:#151815;color:#FFF;z-index:901;overflow-y:auto;box-shadow:-12px 0 40px rgba(43,38,32,0.14);animation:sfFade .25s">
+    <div style="position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(21,24,21,0.96);border-bottom:1px solid #2A2F2A">
+      <span style="font-size:12px;letter-spacing:2px;font-weight:700;color:#9AA39C;white-space:nowrap">CAPELA Nº {{ d.numStr }}</span>
+      <button onClick="{{ closeDrawer }}" aria-label="Fechar" style="width:38px;height:38px;border-radius:999px;border:1px solid #2A2F2A;background:transparent;cursor:pointer;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 14 14" stroke="#FFF" stroke-width="1.6"><path d="M2 2l10 10M12 2L2 12"></path></svg></button>
+    </div>
+    <div style="padding:18px 22px 0">
+      <div style="position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:#2A2F2A">
+        <img src="{{ d.mainSrc }}" alt="{{ d.mainAlt }}" onClick="{{ d.expand }}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in;animation:sfFade .4s">
+        <button onClick="{{ d.prev }}" aria-label="Foto anterior" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:999px;border:0;background:rgba(15,18,15,0.65);cursor:pointer;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#FFF" stroke-width="1.6"><path d="M10 3L5 8l5 5"></path></svg></button>
+        <button onClick="{{ d.next }}" aria-label="Próxima foto" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:999px;border:0;background:rgba(15,18,15,0.65);cursor:pointer;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#FFF" stroke-width="1.6"><path d="M6 3l5 5-5 5"></path></svg></button>
+        <button onClick="{{ d.expand }}" style="position:absolute;right:12px;bottom:12px;display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:0;background:rgba(15,18,15,0.65);font-size:13px;font-weight:700;cursor:pointer;color:#FFF"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#FFF" stroke-width="1.4"><path d="M1 4V1h3M8 1h3v3M11 8v3H8M4 11H1V8"></path></svg>Expandir · {{ d.counter }}</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none">
+        <sc-for list="{{ d.thumbs }}" as="t" hint-placeholder-count="4">
+          <button onClick="{{ t.onClick }}" style="flex:0 0 74px;height:56px;padding:0;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid {{ t.border }};opacity: {{ t.op }};background:#2A2F2A"><img src="{{ t.src }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="padding:26px 22px 8px">
+      <span style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;padding:5px 11px;border-radius:999px;background: {{ d.zoneBg }};color: {{ d.zoneColor }}">Zona {{ d.zoneLabel }}</span>
+      <h2 style="font-size:31px;font-weight:700;letter-spacing:-0.4px;line-height:1.05;margin:14px 0 6px;text-wrap:pretty">{{ d.name }}</h2>
+      <div style="font-size:16px;color:#9AA39C">{{ d.padroeiro }} · {{ d.localidade }}</div>
+      <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+        <a href="{{ d.mapsUrl }}" target="_blank" style="padding:11px 20px;border-radius:999px;background:#FFF;color:#141614;font-weight:700;font-size:14px;text-decoration:none">Como chegar</a>
+        <button onClick="{{ d.share }}" style="padding:11px 20px;border-radius:999px;border:1px solid #2A2F2A;background:transparent;font-weight:700;font-size:14px;cursor:pointer;color:#FFF">{{ shareLabel }}</button>
+      </div>
+    </div>
+    <div style="padding:22px">
+      <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#9AA39C;margin-bottom:12px">Ficha técnica</div>
+      <div style="border:1px solid #2A2F2A;border-radius:14px;display:grid;grid-template-columns:1fr 1fr;overflow:hidden">
+        <sc-for list="{{ d.ficha }}" as="f" hint-placeholder-count="8">
+          <div style="padding:14px 16px;border-bottom:1px solid #2A2F2A;border-right:1px solid #2A2F2A;margin:0 -1px -1px 0">
+            <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:#9AA39C;margin-bottom:4px">{{ f.k }}</div>
+            <div style="font-size:15px;font-weight:600">{{ f.v }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="padding:8px 22px 22px">
+      <div style="display:flex;align-items:center;gap:10px;margin:8px 0 16px"><span style="flex:1;height:1px;background:#2A2F2A"></span><svg width="10" height="14" viewBox="0 0 10 14" fill="none" stroke="#C9A45C" stroke-width="1.4"><path d="M5 0v14M1 4h8"></path></svg><span style="flex:1;height:1px;background:#2A2F2A"></span></div>
+      <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#9AA39C;margin-bottom:12px">História</div>
+      <sc-for list="{{ d.paras }}" as="p" hint-placeholder-count="3">
+        <p style="font-size:16.5px;line-height:1.72;margin:0 0 14px;text-wrap:pretty">{{ p.t }}</p>
+      </sc-for>
+      <blockquote style="margin:22px 0 0;padding:4px 0 4px 20px;border-left:2px solid #C9A45C">
+        <p style="font-style:italic;font-weight:400;font-size:20px;line-height:1.35;margin:0 0 8px">“{{ d.quote }}”</p>
+        <footer style="font-size:14px;color:#9AA39C">— {{ d.guardiao }}, guardiã(o) da capela</footer>
+      </blockquote>
+    </div>
+    <div style="padding:14px 22px 22px">
+      <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#9AA39C;margin-bottom:12px">Vozes</div>
+      <div style="border:1px solid #2A2F2A;border-radius:14px;padding:16px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button onClick="{{ d.play }}" aria-label="Ouvir depoimento" style="width:42px;height:42px;flex:none;border-radius:999px;border:0;background:#FFF;cursor:pointer;display:grid;place-items:center">
+            <sc-if value="{{ d.playing }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 12 12" fill="#141614"><rect x="2" y="1" width="3" height="10"></rect><rect x="7" y="1" width="3" height="10"></rect></svg></sc-if>
+            <sc-if value="{{ d.paused }}" hint-placeholder-val="{{ true }}"><svg width="12" height="12" viewBox="0 0 12 12" fill="#141614"><path d="M3 1l8 5-8 5z"></path></svg></sc-if>
+          </button>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:14px;margin-bottom:6px">Depoimento de {{ d.guardiao }}</div>
+            <div style="height:3px;border-radius:2px;background:#2A2F2A;overflow:hidden"><div style="height:100%;width: {{ d.pct }};background:#141614;transition:width .25s linear"></div></div>
+          </div>
+          <span style="font-size:13px;color:#9AA39C;font-variant-numeric:tabular-nums">{{ d.time }}</span>
+        </div>
+        <sc-if value="{{ d.hasAudioFile }}" hint-placeholder-val="{{ false }}"><audio controls="controls" src="{{ d.audioUrl }}" style="width:100%;margin-top:12px"></audio></sc-if>
+        <button onClick="{{ toggleTrans }}" style="margin-top:14px;background:none;border:0;padding:0;color:#C9A45C;font-weight:700;font-size:14px;cursor:pointer">{{ transLabel }}</button>
+        <sc-if value="{{ transOpen }}" hint-placeholder-val="{{ false }}"><p style="font-size:15px;line-height:1.65;color:#E3E7E3;margin:10px 0 0;padding-top:12px;border-top:1px solid #2A2F2A">{{ d.transcricao }}</p></sc-if>
+      </div>
+      <div style="position:relative;margin-top:14px;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#141614">
+        <sc-if value="{{ d.hasVideoFile }}" hint-placeholder-val="{{ false }}"><video controls="controls" src="{{ d.videoUrl }}" style="width:100%;height:100%;object-fit:cover"></video></sc-if>
+        <sc-if value="{{ d.hasEmbed }}" hint-placeholder-val="{{ false }}"><iframe src="{{ d.embedUrl }}" title="Vídeo" style="width:100%;height:100%;border:0" allowfullscreen="allowfullscreen"></iframe></sc-if>
+        <sc-if value="{{ d.noVideo }}" hint-placeholder-val="{{ true }}">
+          <img src="{{ d.videoPoster }}" alt="" style="width:100%;height:100%;object-fit:cover;opacity:0.7">
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#FFF">
+            <span style="width:58px;height:58px;border-radius:50%;background:rgba(15,18,15,0.65);display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 12 12" fill="#FFF"><path d="M3 1.5l7.5 4.5L3 10.5z"></path></svg></span>
+            <span style="font-weight:700;font-size:14px">Entrevista · legendas · Libras</span>
+          </div>
+          <span style="position:absolute;right:12px;bottom:12px;width:84px;height:62px;border-radius:8px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.5);color:#FFF;font-size:11px;font-weight:700;display:grid;place-items:center">LIBRAS</span>
+        </sc-if>
+      </div>
+    </div>
+    <div style="padding:14px 22px 22px">
+      <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#9AA39C;margin-bottom:12px">Localização</div>
+      <div ref="{{ refMini }}" style="height:220px;border-radius:14px;overflow:hidden;border:1px solid #2A2F2A;background:#EFEAE0;z-index:0"></div>
+      <div style="display:flex;gap:16px;margin-top:10px;font-size:14px;font-weight:700"><a href="{{ d.mapsUrl }}" target="_blank" style="color:#FFFFFF">Google Maps</a><a href="{{ d.wazeUrl }}" target="_blank" style="color:#FFFFFF">Waze</a></div>
+    </div>
+    <div style="padding:14px 22px 22px">
+      <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:#9AA39C;margin-bottom:12px">Outras capelas da rota {{ d.zoneLabel }}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+        <sc-for list="{{ d.same }}" as="s" hint-placeholder-count="3">
+          <button onClick="{{ s.open }}" style="border:0;background:none;padding:0;text-align:left;cursor:pointer;color:#FFF">
+            <img src="{{ s.cover }}" alt="" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block">
+            <div style="font-size:13px;font-weight:700;margin-top:6px;line-height:1.25">{{ s.name }}</div>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #2A2F2A">
+      <button onClick="{{ d.goPrev }}" style="padding:20px 22px;border:0;border-right:1px solid #2A2F2A;background:#1B1F1B;text-align:left;cursor:pointer;color:#FFF"><div style="font-size:12px;color:#9AA39C;font-weight:700">← Anterior</div><div style="font-size:15px;font-weight:700;letter-spacing:-0.4px;margin-top:2px">{{ d.prevName }}</div></button>
+      <button onClick="{{ d.goNext }}" style="padding:20px 22px;border:0;background:#1B1F1B;text-align:right;cursor:pointer;color:#FFF"><div style="font-size:12px;color:#9AA39C;font-weight:700">Próxima →</div><div style="font-size:15px;font-weight:700;letter-spacing:-0.4px;margin-top:2px">{{ d.nextName }}</div></button>
+    </div>
+  </aside>
+</sc-if>
+
+<sc-if value="{{ lbOpen }}" hint-placeholder-val="{{ false }}">
+  <div role="dialog" aria-label="Fotos" style="position:fixed;inset:0;z-index:1000;background:rgba(22,19,16,0.95);display:flex;flex-direction:column;animation:sfFade .2s">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 22px;color:#FFF">
+      <span style="font-size:14px;font-weight:700;letter-spacing:1px">{{ lb.counter }} · {{ lb.title }}</span>
+      <button onClick="{{ lbClose }}" aria-label="Fechar" style="width:42px;height:42px;border-radius:999px;border:1px solid rgba(255,255,255,0.3);background:none;cursor:pointer;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 14 14" stroke="#FFF" stroke-width="1.6"><path d="M2 2l10 10M12 2L2 12"></path></svg></button>
+    </div>
+    <div onClick="{{ lbClose }}" style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;gap:16px;padding:0 16px">
+      <button onClick="{{ lbPrev }}" aria-label="Anterior" style="width:50px;height:50px;flex:none;border-radius:999px;border:1px solid rgba(255,255,255,0.3);background:none;cursor:pointer;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#FFF" stroke-width="1.6"><path d="M10 3L5 8l5 5"></path></svg></button>
+      <img src="{{ lb.src }}" alt="{{ lb.alt }}" onClick="{{ stop }}" style="max-width:min(1200px,calc(100% - 140px));max-height:100%;object-fit:contain;border-radius:4px;animation:sfFade .35s">
+      <button onClick="{{ lbNext }}" aria-label="Próxima" style="width:50px;height:50px;flex:none;border-radius:999px;border:1px solid rgba(255,255,255,0.3);background:none;cursor:pointer;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#FFF" stroke-width="1.6"><path d="M6 3l5 5-5 5"></path></svg></button>
+    </div>
+    <div style="text-align:center;padding:16px 22px 24px;color:#FFF">
+      <div style="font-size:16px">{{ lb.caption }}</div>
+      <div style="font-size:13px;opacity:0.75;margin-top:4px">Foto: {{ lb.credit }}</div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+  <sc-if value="{{ needLogin }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-label="Admin — Login" style="min-height:100vh;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));background:#0F120F;color:#FFF">
+      <div style="position:relative;min-height:320px;overflow:hidden">
+        <img src="img/c12.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.7">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,18,15,0.2) 0%,rgba(15,18,15,0.85) 100%)"></div>
+        <div style="position:absolute;left:40px;right:40px;bottom:44px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span style="width:40px;height:1px;background:#9AA39C"></span><span style="font-size:12px;color:#B8C0B9;white-space:nowrap">Área da equipe</span></div>
+          <div style="font-size:clamp(36px,4.4vw,60px);font-weight:600;line-height:1.05;text-transform:uppercase;letter-spacing:-1px"><span style="color:#A3AAA4">Sertão</span><br>de Fé</div>
+          <p style="font-size:14px;line-height:1.7;color:#C9CFCA;max-width:360px;margin:16px 0 0">Cadastre capelas, envie fotos, vídeos e áudios e revise os textos antes de publicar.</p>
+        </div>
+      </div>
+      <div style="display:grid;place-items:center;padding:48px 28px">
+        <form onSubmit="{{ doLogin }}" style="width:min(380px,100%);display:flex;flex-direction:column">
+          <h1 style="font-size:30px;font-weight:500;text-transform:uppercase;letter-spacing:-0.3px;margin:0 0 6px">Entrar</h1>
+          <p style="font-size:14px;color:#9AA39C;margin:0 0 30px">Painel de conteúdo do projeto</p>
+          <label style="font-size:12px;color:#9AA39C;margin-bottom:8px">E-mail</label>
+          <input type="email" value="{{ loginEmail }}" onChange="{{ onLoginEmail }}" placeholder="voce@sertaodefe.org" style="padding:13px 0;border:0;border-bottom:1px solid #3A403A;background:none;color:#FFF;font-size:15px;outline:none;margin-bottom:22px;font-family:inherit">
+          <label style="font-size:12px;color:#9AA39C;margin-bottom:8px">Senha</label>
+          <input type="password" value="{{ loginPass }}" onChange="{{ onLoginPass }}" placeholder="••••••••" style="padding:13px 0;border:0;border-bottom:1px solid #3A403A;background:none;color:#FFF;font-size:15px;outline:none;margin-bottom:14px;font-family:inherit">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#9AA39C;margin-bottom:30px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked="checked" style="accent-color:#C9A45C">Manter conectado</label>
+            <span style="text-decoration:underline;text-underline-offset:3px;cursor:pointer">Esqueci a senha</span>
+          </div>
+          <button type="submit" style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px;border-radius:999px;border:0;background:#FFF;color:#141614;font-weight:600;font-size:15px;cursor:pointer;font-family:inherit">Entrar no painel <span>→</span></button>
+          <button type="button" onClick="{{ goHome }}" style="margin-top:12px;padding:10px;border:0;background:none;color:#9AA39C;font-size:14px;cursor:pointer;font-family:inherit">← Voltar ao site</button>
+          <div style="margin-top:28px;padding:14px 16px;border:1px dashed #3A403A;border-radius:10px;font-size:13px;line-height:1.6;color:#B8C0B9">Protótipo: qualquer e-mail e senha entram, e os campos vazios também. Nada é enviado ou salvo em servidor.</div>
+        </form>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ authed }}" hint-placeholder-val="{{ false }}">
+    <div style="display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh;background:#F5F6F3">
+      <aside style="background:#FFF;border-right:1px solid #E3E6E2;padding:22px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh">
+        <div style="display:flex;align-items:center;gap:8px;padding:0 10px 20px">
+          <svg width="14" height="20" viewBox="0 0 18 24" fill="none" stroke="#C9A45C" stroke-width="1.6"><path d="M9 1v22M2 7h14"></path></svg>
+          <span style="font-size:17px;font-weight:700;letter-spacing:-0.4px;white-space:nowrap">Sertão de Fé</span>
+        </div>
+        <sc-for list="{{ adminNav }}" as="n" hint-placeholder-count="4">
+          <button onClick="{{ n.onClick }}" style="text-align:left;padding:10px 12px;border-radius:10px;border:0;font-size:14px;font-weight:600;cursor:pointer;background: {{ n.bg }};color: {{ n.color }}">{{ n.label }}</button>
+        </sc-for>
+        <div style="flex:1"></div>
+        <button onClick="{{ goHome }}" style="text-align:left;padding:10px 12px;border-radius:10px;border:1px solid #E3E6E2;background:#FFF;font-size:14px;font-weight:600;cursor:pointer;color:#141614">Ver site ↗</button>
+        <div style="display:flex;gap:10px;align-items:center;padding:14px 10px 0;margin-top:10px;border-top:1px solid #E3E6E2">
+          <span style="width:34px;height:34px;border-radius:50%;background:#EEF0ED;color:#141614;font-weight:700;display:grid;place-items:center;font-size:14px">A</span>
+          <div style="min-width:0;flex:1"><div style="font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis">{{ userName }}</div><div style="font-size:12px;color:#5B625D">Editora</div></div>
+          <button onClick="{{ doLogout }}" title="Sair" style="background:none;border:0;padding:6px;cursor:pointer;color:#5B625D;font-size:12px;font-weight:700;font-family:inherit">Sair</button>
+        </div>
+      </aside>
+      <main style="padding:32px 36px 64px;min-width:0">
+
+        <sc-if value="{{ aPainel }}" hint-placeholder-val="{{ true }}">
+          <div data-screen-label="Admin — Painel">
+            <h1 style="font-size:31px;font-weight:700;letter-spacing:-0.4px;margin:0 0 24px">Painel</h1>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px">
+              <sc-for list="{{ adminStats }}" as="s" hint-placeholder-count="4">
+                <div style="background:#FFF;border:1px solid #E3E6E2;border-radius:14px;padding:20px"><div style="font-size:31px;font-weight:700;letter-spacing:-0.4px;line-height:1">{{ s.v }}</div><div style="font-size:13px;color:#5B625D;margin-top:6px;font-weight:600">{{ s.k }}</div></div>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+              <div style="background:#FFF;border:1px solid #E3E6E2;border-radius:14px;padding:22px">
+                <div style="font-weight:700;margin-bottom:14px">Pendências</div>
+                <sc-for list="{{ pendencias }}" as="p" hint-placeholder-count="3">
+                  <button onClick="{{ p.onClick }}" style="display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:12px 0;border:0;border-top:1px solid #EEF0ED;background:none;cursor:pointer;color:#141614;font-size:14px"><span>{{ p.name }}</span><span style="color:#B4633E;font-weight:700;white-space:nowrap">{{ p.issue }}</span></button>
+                </sc-for>
+                <sc-if value="{{ noPend }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:#5B625D">Nada pendente.</div></sc-if>
+              </div>
+              <div style="background:#FFF;border:1px solid #E3E6E2;border-radius:14px;padding:22px">
+                <div style="font-weight:700;margin-bottom:14px">Últimas edições</div>
+                <sc-for list="{{ logList }}" as="l" hint-placeholder-count="4">
+                  <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid #EEF0ED;font-size:14px"><span><strong>{{ l.who }}</strong> {{ l.what }}</span><span style="color:#5B625D;white-space:nowrap">{{ l.when }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ aCapelas }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Admin — Capelas">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px">
+              <h1 style="font-size:31px;font-weight:700;letter-spacing:-0.4px;margin:0">Capelas</h1>
+              <button onClick="{{ newChapel }}" style="padding:12px 22px;border-radius:999px;border:0;background:#141614;color:#FFF;font-weight:700;font-size:14px;cursor:pointer">+ Nova capela</button>
+            </div>
+            <div style="background:#FFF;border:1px solid #E3E6E2;border-radius:14px;overflow:hidden">
+              <div style="display:grid;grid-template-columns:64px 52px minmax(0,2.4fr) 1fr 1fr 90px 90px;gap:14px;padding:12px 18px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:#5B625D;border-bottom:1px solid #E3E6E2"><span></span><span>Nº</span><span>Nome</span><span>Zona</span><span>Status</span><span>Destaque</span><span></span></div>
+              <sc-for list="{{ adminRows }}" as="r" hint-placeholder-count="8">
+                <div style="display:grid;grid-template-columns:64px 52px minmax(0,2.4fr) 1fr 1fr 90px 90px;gap:14px;padding:10px 18px;align-items:center;border-bottom:1px solid #EEF0ED;font-size:14px">
+                  <img src="{{ r.cover }}" alt="" style="width:64px;height:46px;object-fit:cover;border-radius:6px;background:#E3E6E2">
+                  <span style="font-weight:700;color:#5B625D">{{ r.numStr }}</span>
+                  <span style="min-width:0"><span style="display:block;font-weight:700">{{ r.name }}</span><span style="display:block;font-size:13px;color:#5B625D">{{ r.mediaInfo }}</span></span>
+                  <span style="color: {{ r.zoneColor }};font-weight:700">{{ r.zoneLabel }}</span>
+                  <span><span style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background: {{ r.stBg }};color: {{ r.stColor }}">{{ r.status }}</span></span>
+                  <span>{{ r.destaque }}</span>
+                  <button onClick="{{ r.edit }}" style="padding:8px 14px;border-radius:999px;border:1px solid #E3E6E2;background:#FFF;font-weight:700;font-size:13px;cursor:pointer;color:#141614">Editar</button>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ aEditor }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Admin — Editor da capela">
+            <button onClick="{{ backList }}" style="background:none;border:0;padding:0;color:#141614;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:14px">← Capelas</button>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+              <div style="display:flex;align-items:center;gap:14px;min-width:0">
+                <h1 style="font-size:30px;font-weight:700;letter-spacing:-0.4px;margin:0;line-height:1.05">{{ e.title }}</h1>
+                <span style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background: {{ e.stBg }};color: {{ e.stColor }}">{{ e.status }}</span>
+              </div>
+              <div style="display:flex;gap:10px">
+                <button onClick="{{ e.preview }}" style="padding:11px 20px;border-radius:999px;border:1px solid #E3E6E2;background:#FFF;font-weight:700;font-size:14px;cursor:pointer;color:#141614">Prévia</button>
+                <button onClick="{{ e.save }}" style="padding:11px 22px;border-radius:999px;border:0;background:#141614;color:#FFF;font-weight:700;font-size:14px;cursor:pointer">{{ saveLabel }}</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:4px;border-bottom:1px solid #E3E6E2;margin-bottom:24px;flex-wrap:wrap">
+              <sc-for list="{{ eTabs }}" as="t" hint-placeholder-count="5">
+                <button onClick="{{ t.onClick }}" style="padding:12px 16px;border:0;background:none;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:-1px;color: {{ t.color }};border-bottom:2px solid {{ t.line }}">{{ t.label }}<span style="color:#B4633E">{{ t.warn }}</span></button>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ tDados }}" hint-placeholder-val="{{ true }}">
+              <div style="background:#FFF;border:1px solid #E3E6E2;border-radius:14px;padding:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px">
+                <sc-for list="{{ eFields }}" as="f" hint-placeholder-count="10">
+                  <label style="display:block">
+                    <span style="display:block;font-size:13px;font-weight:700;margin-bottom:6px">{{ f.label }}</span>
+                    <sc-if value="{{ f.isText }}" hint-placeholder-val="{{ true }}"><input value="{{ f.value }}" onChange="{{ f.onChange }}" style="width:100%;padding:11px 13px;border:1px solid #E3E6E2;border-radius:10px;background:#FFF"></sc-if>
+                    <sc-if value="{{ f.isSelect }}" hint-placeholder-val="{{ false }}">
+                      <select value="{{ f.value }}" onChange="{{ f.onChange }}" style="width:100%;padding:11px 13px;border:1px solid #E3E6E2;border-radius:10px;background:#FFF">
+                        <sc-for list="{{ f.options }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.l }}</option></sc-for>
+                      </select>
+                    </sc-if>
+                  </label>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tLocal }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#FFF;border:1px solid #E3E6E2;border-radius:14px;padding:24px">
+                <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px">
+                  <label style="flex:1;min-width:160px"><span style="display:block;font-size:13px;font-weight:700;margin-bottom:6px">Latitude</span><input value="{{ e.lat }}" onChange="{{ e.onLat }}" style="width:100%;padding:11px 13px;border:1px solid #E3E6E2;border-radius:10px"></label>
+                  <label style="flex:1;min-width:160px"><span style="display:block;font-size:13px;font-weight:700;margin-bottom:6px">Longitude</span><input value="{{ e.lng }}" onChange="{{ e.onLng }}" style="width:100%;padding:11px 13px;border:1px solid #E3E6E2;border-radius:10px"></label>
+                  <label style="flex:2;min-width:220px"><span style="display:block;font-size:13px;font-weight:700;margin-bottom:6px">Buscar endereço</span><input placeholder="Ex.: Sítio Lagoa, Triunfo-PE" style="width:100%;padding:11px 13px;border:1px solid #E3E6E2;border-radius:10px"></label>
+                </div>
+                <div ref="{{ refAdmin }}" style="height:420px;border-radius:12px;overflow:hidden;border:1px solid #E3E6E2;background:#EFEAE0;z-index:0"></div>
+                <div style="font-size:13px;color:#5B625D;margin-top:10px">Arraste o pino ou clique no mapa para ajustar a posição.</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tMidia }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:16px">
+                <label onDragOver="{{ onDragOver }}" onDragLeave="{{ onDragLeave }}" onDrop="{{ onDrop }}" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:36px 20px;border:1.5px dashed {{ dropBorder }};border-radius:14px;background: {{ dropBg }};cursor:pointer;text-align:center">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#141614" stroke-width="1.5"><path d="M14 19V5M8 11l6-6 6 6M4 19v4h20v-4"></path></svg>
+                  <span style="font-weight:700;font-size:15px">Arraste fotos, vídeos e áudios aqui ou clique para escolher</span>
+                  <span style="font-size:13px;color:#5B625D">Fotos JPG, PNG, HEIC até 20 MB · Vídeos MP4 até 500 MB · Áudios MP3, WAV, M4A</span>
+                  <input type="file" multiple="multiple" accept="image/*,video/*,audio/*" onChange="{{ onFiles }}" style="display:none">
+                </label>
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                  <input value="{{ linkDraft }}" onChange="{{ onLinkDraft }}" placeholder="Ou cole um link do YouTube / Vimeo" style="flex:1;min-width:240px;padding:11px 14px;border:1px solid #E3E6E2;border-radius:999px;background:#FFF">
+                  <button onClick="{{ addLink }}" style="padding:11px 20px;border-radius:999px;border:1px solid #141614;background:#FFF;color:#141614;font-weight:700;font-size:14px;cursor:pointer">Adicionar vídeo</button>
+                </div>
+                <div style="background:#FFF;border:1px solid #E3E6E2;border-radius:14px">
+                  <sc-for list="{{ eMedia }}" as="m" hint-placeholder-count="4">
+                    <div style="display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:16px;padding:14px 16px;border-bottom:1px solid #EEF0ED;align-items:start">
+                      <div style="position:relative;width:96px;height:72px;border-radius:8px;overflow:hidden;background:#EEF0ED;display:grid;place-items:center">
+                        <sc-if value="{{ m.isFoto }}" hint-placeholder-val="{{ true }}"><img src="{{ m.url }}" alt="" style="width:100%;height:100%;object-fit:cover"></sc-if>
+                        <sc-if value="{{ m.notFoto }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:#5B625D">{{ m.typeLabel }}</span></sc-if>
+                        <sc-if value="{{ m.cover }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:4px;left:4px;font-size:10px;font-weight:700;background:#C9A45C;color:#FFF;padding:2px 6px;border-radius:999px">CAPA</span></sc-if>
+                      </div>
+                      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px">
+                        <input value="{{ m.caption }}" onChange="{{ m.onCaption }}" placeholder="Legenda" style="padding:9px 11px;border:1px solid #E3E6E2;border-radius:8px;font-size:14px">
+                        <input value="{{ m.alt }}" onChange="{{ m.onAlt }}" placeholder="Texto alternativo (obrigatório)" style="padding:9px 11px;border:1px solid {{ m.altBorder }};border-radius:8px;font-size:14px">
+                        <input value="{{ m.credit }}" onChange="{{ m.onCredit }}" placeholder="Crédito" style="padding:9px 11px;border:1px solid #E3E6E2;border-radius:8px;font-size:14px">
+                      </div>
+                      <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">
+                        <button onClick="{{ m.up }}" title="Subir" style="width:32px;height:32px;border-radius:8px;border:1px solid #E3E6E2;background:#FFF;cursor:pointer">↑</button>
+                        <button onClick="{{ m.down }}" title="Descer" style="width:32px;height:32px;border-radius:8px;border:1px solid #E3E6E2;background:#FFF;cursor:pointer">↓</button>
+                        <sc-if value="{{ m.canCover }}" hint-placeholder-val="{{ false }}"><button onClick="{{ m.setCover }}" style="height:32px;padding:0 10px;border-radius:8px;border:1px solid #E3E6E2;background:#FFF;cursor:pointer;font-size:12px;font-weight:700">Capa</button></sc-if>
+                        <button onClick="{{ m.remove }}" title="Remover" style="height:32px;padding:0 10px;border-radius:8px;border:1px solid #E3E6E2;background:#FFF;cursor:pointer;font-size:12px;font-weight:700;color:#B4633E">Remover</button>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tTextos }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#FFF;border:1px solid #E3E6E2;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:18px">
+                <sc-for list="{{ eTexts }}" as="t" hint-placeholder-count="3">
+                  <label style="display:block">
+                    <span style="display:block;font-size:13px;font-weight:700;margin-bottom:6px">{{ t.label }}</span>
+                    <div style="border:1px solid #E3E6E2;border-radius:10px;overflow:hidden">
+                      <div style="display:flex;gap:2px;padding:6px;border-bottom:1px solid #E3E6E2;background:#F5F6F3">
+                        <button style="width:30px;height:28px;border:0;background:none;font-weight:800;cursor:pointer">B</button>
+                        <button style="width:30px;height:28px;border:0;background:none;font-style:italic;font-family:Georgia,serif;cursor:pointer">I</button>
+                        <button style="width:42px;height:28px;border:0;background:none;font-size:12px;font-weight:700;cursor:pointer">Link</button>
+                        <button style="width:30px;height:28px;border:0;background:none;font-size:18px;font-family:Georgia,serif;cursor:pointer">“</button>
+                      </div>
+                      <textarea value="{{ t.value }}" onChange="{{ t.onChange }}" rows="{{ t.rows }}" style="width:100%;border:0;outline:none;padding:12px 14px;line-height:1.6;resize:vertical"></textarea>
+                    </div>
+                  </label>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tPub }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px">
+                <div style="background:#FFF;border:1px solid #E3E6E2;border-radius:14px;padding:24px">
+                  <div style="font-weight:700;margin-bottom:14px">Status</div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px">
+                    <sc-for list="{{ eStatus }}" as="s" hint-placeholder-count="3">
+                      <button onClick="{{ s.onClick }}" style="padding:10px 16px;border-radius:999px;font-weight:700;font-size:14px;cursor:pointer;border:1px solid {{ s.border }};background: {{ s.bg }};color: {{ s.color }}">{{ s.label }}</button>
+                    </sc-for>
+                  </div>
+                  <div style="font-size:13px;color:#5B625D;margin:-10px 0 20px">Colaboradores enviam para revisão; só editores publicam.</div>
+                  <button onClick="{{ e.toggleFeat }}" style="display:flex;align-items:center;gap:12px;background:none;border:0;padding:0;cursor:pointer;font-size:15px;font-weight:600;color:#141614">
+                    <span style="width:44px;height:26px;border-radius:999px;position:relative;transition:background .2s;background: {{ e.featBg }}"><span style="position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#FFF;transition:left .2s;left: {{ e.featLeft }}"></span></span>
+                    Destaque na página inicial
+                  </button>
+                  <div style="margin-top:22px;padding-top:18px;border-top:1px solid #EEF0ED">
+                    <div style="font-weight:700;margin-bottom:10px;font-size:14px">Checklist</div>
+                    <sc-for list="{{ eChecks }}" as="c" hint-placeholder-count="3">
+                      <div style="display:flex;gap:10px;font-size:14px;padding:4px 0"><span style="font-weight:800;color: {{ c.color }}">{{ c.mark }}</span>{{ c.label }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="background:#FFF;border:1px solid #E3E6E2;border-radius:14px;padding:24px">
+                  <div style="font-weight:700;margin-bottom:14px">Histórico de versões</div>
+                  <sc-for list="{{ eHistory }}" as="l" hint-placeholder-count="3">
+                    <div style="display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid #EEF0ED;font-size:14px"><span><strong>{{ l.who }}</strong> {{ l.what }}</span><span style="color:#5B625D;white-space:nowrap">{{ l.when }}</span></div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ aMidia }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Admin — Biblioteca de mídia">
+            <h1 style="font-size:31px;font-weight:700;letter-spacing:-0.4px;margin:0 0 18px">Biblioteca de mídia</h1>
+            <div style="display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap">
+              <sc-for list="{{ libChips }}" as="z" hint-placeholder-count="4">
+                <button onClick="{{ z.onClick }}" style="padding:8px 14px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid {{ z.border }};background: {{ z.bg }};color: {{ z.color }}">{{ z.label }}</button>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px">
+              <sc-for list="{{ libList }}" as="m" hint-placeholder-count="12">
+                <button onClick="{{ m.open }}" style="text-align:left;border:1px solid #E3E6E2;background:#FFF;border-radius:12px;padding:0;overflow:hidden;cursor:pointer;color:#141614">
+                  <div style="position:relative;aspect-ratio:4/3;background:#EEF0ED;display:grid;place-items:center">
+                    <sc-if value="{{ m.isFoto }}" hint-placeholder-val="{{ true }}"><img src="{{ m.url }}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if>
+                    <sc-if value="{{ m.notFoto }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:#5B625D">{{ m.typeLabel }}</span></sc-if>
+                    <sc-if value="{{ m.noAlt }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:6px;right:6px;font-size:10px;font-weight:700;background:#B4633E;color:#FFF;padding:2px 7px;border-radius:999px">SEM ALT</span></sc-if>
+                  </div>
+                  <div style="padding:8px 10px;font-size:12px;line-height:1.35"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.caption }}</div><div style="color:#5B625D;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.chapel }}</div></div>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ aGuard }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Admin — Guardiões">
+            <h1 style="font-size:31px;font-weight:700;letter-spacing:-0.4px;margin:0 0 18px">Guardiões e depoimentos</h1>
+            <div style="background:#FFF;border:1px solid #E3E6E2;border-radius:14px">
+              <sc-for list="{{ guardList }}" as="g" hint-placeholder-count="6">
+                <div style="display:grid;grid-template-columns:44px minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:12px 18px;border-bottom:1px solid #EEF0ED;font-size:14px">
+                  <span style="width:40px;height:40px;border-radius:50%;background:#EEF0ED;color:#5B625D;font-weight:700;display:grid;place-items:center">{{ g.initial }}</span>
+                  <span><span style="display:block;font-weight:700">{{ g.name }}</span><span style="display:block;color:#5B625D;font-size:13px">{{ g.chapel }}</span></span>
+                  <span style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:#E7EFE8;color:#3F6148">Autorização assinada</span>
+                  <span style="color:#5B625D">1 depoimento · transcrito</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </main>
+    </div>
+  </sc-if>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ZONES = {
+  urbana: { label: 'Urbana', color: '#2F5F95', bg: '#E7EEF6', pin: '#6E9BD0' },
+  rural: { label: 'Rural', color: '#A4532A', bg: '#F6EBE4', pin: '#D98B5B' },
+  distrital: { label: 'Distrital', color: '#3E7350', bg: '#E6EFE8', pin: '#8DBF98' }
+};
+const CENTER = [-7.845, -38.11];
+const RAW = [
+  ['Capela de Nossa Senhora das Dores','Nossa Senhora das Dores','urbana','Centro',1928,'15 de setembro','Dona Maria José',0,[72],-7.8392,-38.0991],
+  ['Capela de São Sebastião','São Sebastião','rural','Sítio Boa Vista',1941,'20 de janeiro','Seu Antônio Ferreira',1,[62],-7.8710,-38.1320],
+  ['Capela de São José','São José','rural','Sítio Lagoa',1952,'19 de março','Dona Francisca',2,[63],-7.8045,-38.1480],
+  ['Capela de Nossa Senhora de Fátima','Nossa Senhora de Fátima','urbana','Bairro Alto',1956,'13 de maio','Dona Lourdes',3,[64],-7.8331,-38.1062],
+  ['Capela de Santo Antônio','Santo Antônio','distrital','Distrito de Jericó',1937,'13 de junho','Seu Manoel',4,[65],-7.7710,-38.0680],
+  ['Capela de Nossa Senhora da Conceição','Nossa Senhora da Conceição','rural','Sítio Caldeirão',1948,'8 de dezembro','Dona Socorro',5,[67],-7.8890,-38.0820],
+  ['Capela de São Vicente Férrer','São Vicente Férrer','urbana','Centro',1919,'5 de abril','Seu Joaquim',6,[66],-7.8417,-38.1078],
+  ['Capela do Sagrado Coração de Jesus','Sagrado Coração de Jesus','rural','Sítio Pedra Branca',1963,'junho (sexta-feira)','Dona Rita',7,[],-7.8150,-38.0610],
+  ['Capela de Nossa Senhora Aparecida','Nossa Senhora Aparecida','rural','Sítio Riacho Fundo',1970,'12 de outubro','Seu Raimundo',8,[68,76],-7.8620,-38.1720],
+  ['Capela de São Francisco de Assis','São Francisco de Assis','distrital','Distrito de Jericó',1944,'4 de outubro','Dona Zefinha',9,[69],-7.7745,-38.0632],
+  ['Capela de Santa Luzia','Santa Luzia','distrital','Distrito de Jericó',1951,'13 de dezembro','Dona Luzia',10,[71,73],-7.7690,-38.0721],
+  ['Capela de Nossa Senhora do Carmo','Nossa Senhora do Carmo','urbana','Rua do Carmo',1934,'16 de julho','Dona Carmelita',11,[74],-7.8356,-38.0948],
+  ['Capela de São Pedro','São Pedro','urbana','Alto do Cruzeiro',1925,'29 de junho','Seu Pedro Alves',12,[],-7.8299,-38.1015],
+  ['Capela do Bom Jesus','Bom Jesus','distrital','Distrito de Canaã',1939,'6 de agosto','Seu Benedito',13,[],-7.9210,-38.1540],
+  ['Capela de Santa Rita de Cássia','Santa Rita de Cássia','rural','Sítio Olho d’Água',1966,'22 de maio','Dona Ritinha',14,[],-7.7920,-38.1180],
+  ['Capela de São João Batista','São João Batista','rural','Sítio Baixio',1958,'24 de junho','Seu João',15,[27],-7.8980,-38.1250],
+  ['Capela de Nossa Senhora de Lourdes','Nossa Senhora de Lourdes','distrital','Distrito de Canaã',1947,'11 de fevereiro','Dona Neném',16,[28],-7.9248,-38.1502],
+  ['Capela de Sant’Ana','Sant’Ana','distrital','Distrito de Canaã',1932,'26 de julho','Dona Ana',17,[29],-7.9180,-38.1588],
+  ['Capela do Cruzeiro','Santa Cruz','rural','Sítio Serrote',1960,'3 de maio','Seu Severino',18,[20,33],-7.8480,-38.0420],
+  ['Capela de Nossa Senhora da Penha','Nossa Senhora da Penha','rural','Sítio Lajedo',1949,'8 de setembro','Dona Penha',19,[32,91],-7.8250,-38.1890]
+];
+const POOL = [36,37,38,39,40,41,42,43,44,45,46,48,49,50,51,52,53,54,55,56,57,58,59,60,61,80,81,82,83,84,85,86,87,88,89,90,92,21,22,23,24,25,26,30,31,34,75,77,78];
+const QUOTES = [
+  'A capela foi levantada pelas mãos da comunidade. Cada pedra tem o nome de uma família.',
+  'Quando a chuva não vinha, era aqui que a gente rezava a novena. E ela vinha.',
+  'Minha mãe cuidou dessa chave por quarenta anos. Hoje sou eu quem abre a porta.',
+  'Na festa do padroeiro o sítio todo se encontra. É a nossa maneira de agradecer.'
+];
+const ESTILOS = ['Colonial sertanejo','Vernacular com frontão','Eclético simplificado','Vernacular em pedra'];
+const CONS = ['Bom','Bom','Regular','Bom','Em restauro'];
+const img = n => 'img/c' + String(n).padStart(2, '0') + '.jpg';
+const pad2 = n => String(n).padStart(2, '0');
+let UID = 1;
+const uid = () => 'm' + (UID++);
+const slugify = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+function buildChapels() {
+  let p = 0;
+  return RAW.map((r, i) => {
+    const [name, pad, zona, loc, ano, festa, guard, f, extras, lat, lng] = r;
+    const media = [{ id: uid(), type: 'foto', url: img(f), caption: 'Fachada', alt: 'Fachada da ' + name + ', ' + loc, credit: 'Acervo Sertão de Fé', cover: true }];
+    extras.forEach(x => media.push({ id: uid(), type: 'foto', url: img(x), caption: 'Visita da equipe do projeto', alt: 'Equipe do projeto e moradores em frente à ' + name, credit: 'Acervo Sertão de Fé', cover: false }));
+    for (let k = 0; k < 2; k++) { const x = POOL[p++ % POOL.length]; media.push({ id: uid(), type: 'foto', url: img(x), caption: k ? 'Registro do levantamento' : 'Interior da capela', alt: (k ? 'Pesquisadores registrando detalhes na ' : 'Vista interna da ') + name, credit: 'Acervo Sertão de Fé', cover: false }); }
+    const zt = zona === 'urbana' ? 'na zona urbana de Triunfo' : zona === 'rural' ? 'na zona rural do município' : 'no ' + loc.replace('Distrito', 'distrito');
+    return {
+      id: i + 1, num: i + 1, slug: slugify(name), name, padroeiro: pad, zona, localidade: loc, ano: String(ano), festa,
+      estilo: ESTILOS[i % 4], conservacao: CONS[i % 5], guardiao: guard, lat, lng,
+      historia: name + ' fica em ' + loc + ', ' + zt + '. Segundo os moradores, a primeira missa no local foi celebrada por volta de ' + ano + ', quando famílias da comunidade se reuniram para erguer um pequeno templo dedicado a ' + pad + '.\n\nA construção foi feita em mutirão, com pedra e cal da região. Ao longo das décadas a capela recebeu reformas, mas manteve a fachada simples, o sino e o cruzeiro em frente, marcas da arquitetura religiosa do sertão.\n\nA festa do padroeiro, em ' + festa + ', reúne novena, procissão e leilão. É nesse período que a capela fica mais cheia e que as histórias da comunidade passam de uma geração para outra.',
+      citacao: QUOTES[i % 4],
+      transcricao: 'Eu nasci aqui perto e desde menina venho a essa capela. A gente limpava, enfeitava o altar com flor do mato e esperava o padre que vinha a cavalo uma vez por mês. ' + QUOTES[i % 4] + ' Tem gente que vai embora para São Paulo, mas quando chega a festa todo mundo volta.',
+      media, destaque: [1, 3, 4, 9, 11, 16, 12, 19].includes(i + 1), status: 'Publicado'
+    };
+  });
+}
+
+const ST = {
+  'Publicado': { bg: '#E7EFE8', color: '#3F6148' },
+  'Em revisão': { bg: '#F5EEDD', color: '#7A6030' },
+  'Rascunho': { bg: '#EFEBE4', color: '#6E655A' }
+};
+const AUDIO_LEN = 84;
+const fmt = s => Math.floor(s / 60) + ':' + pad2(Math.floor(s % 60));
+const ago = t => { const m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'agora' : m < 60 ? 'há ' + m + ' min' : m < 1440 ? 'há ' + Math.round(m / 60) + ' h' : 'há ' + Math.round(m / 1440) + ' d'; };
+
+class Component extends DCLogic {
+  state = {
+    view: 'home', chapels: buildChapels(), hero: 0, car: 0,
+    homeZone: 'todas', galZone: 'todas', mapZone: 'todas', search: '', sort: 'num',
+    drawerId: null, slide: 0, lb: null, audio: null, audioT: 0, transOpen: false, shared: false,
+    big: false, contrast: false, hoverId: null,
+    authed: false, aView: 'painel', editId: null, aTab: 'dados', drag: false, linkDraft: '', libType: 'todos', saved: false,
+    log: [
+      { who: 'Ana', what: 'publicou Capela de Santa Luzia', t: Date.now() - 1000 * 60 * 42, cid: 11 },
+      { who: 'Lucyle', what: 'enviou 4 fotos para Capela do Cruzeiro', t: Date.now() - 1000 * 60 * 60 * 5, cid: 19 },
+      { who: 'Jane', what: 'editou a história da Capela de São José', t: Date.now() - 1000 * 60 * 60 * 26, cid: 3 }
+    ]
+  };
+  maps = {};
+
+  componentDidMount() {
+    this.onKey = e => {
+      if (e.key === 'Escape') { if (this.state.lb) this.setState({ lb: null }); else if (this.state.drawerId) this.closeDrawer(); }
+      if (this.state.lb && e.key === 'ArrowRight') this.lbStep(1);
+      if (this.state.lb && e.key === 'ArrowLeft') this.lbStep(-1);
+    };
+    window.addEventListener('keydown', this.onKey);
+    this.onHash = () => this.readHash();
+    window.addEventListener('hashchange', this.onHash);
+    this.readHash();
+  }
+  componentWillUnmount() {
+    clearInterval(this.heroTimer); clearInterval(this.audioTimer);
+    window.removeEventListener('keydown', this.onKey); window.removeEventListener('hashchange', this.onHash);
+    Object.values(this.maps).forEach(m => m.map.remove());
+  }
+  componentDidUpdate() { this.syncMaps(); }
+
+  readHash() {
+    const h = location.hash.replace(/^#\/?/, '');
+    const [a, b] = h.split('/');
+    if (a === 'capelas' && b) { const c = this.state.chapels.find(x => x.slug === b); this.setState({ view: 'capelas', drawerId: c ? c.id : null, slide: 0 }); return; }
+    if (['capelas', 'mapa', 'admin'].includes(a)) this.setState({ view: a, drawerId: null, lb: null });
+    else if (a === '' || a === 'inicio') this.setState({ view: 'home', drawerId: null, lb: null });
+  }
+  go(view) {
+    this.setState({ view, drawerId: null, lb: null });
+    history.replaceState(null, '', view === 'home' ? '#/' : '#/' + view);
+    window.scrollTo(0, 0);
+  }
+
+  // ---------- data ----------
+  pub() { return this.state.chapels.filter(c => c.status === 'Publicado'); }
+  photos(c) { const f = c.media.filter(m => m.type === 'foto'); return [...f.filter(m => m.cover), ...f.filter(m => !m.cover)]; }
+  cover(c) { const p = this.photos(c); return p.length ? p[0].url : img(12); }
+  card(c) {
+    const z = ZONES[c.zona], ph = this.photos(c);
+    return {
+      ...c, numStr: pad2(c.num), zoneLabel: z.label, zoneColor: z.color, zoneBg: z.bg, cover: this.cover(c),
+      alt: ph[0] ? ph[0].alt : c.name, photoCount: ph.length,
+      hasVideo: c.media.some(m => m.type === 'video') || c.num % 3 !== 0, hasAudio: true,
+      open: () => this.openFicha(c.id), lightbox: () => this.openLb(c.id, 0)
+    };
+  }
+  updChapel(id, fn) { this.setState(s => ({ chapels: s.chapels.map(c => c.id === id ? fn(c) : c), saved: false })); }
+  addLog(what, cid) { this.setState(s => ({ log: [{ who: 'Ana', what, t: Date.now(), cid }, ...s.log].slice(0, 30) })); }
+
+  openFicha(id) {
+    const c = this.state.chapels.find(x => x.id === id);
+    this.setState({ drawerId: id, slide: 0, transOpen: false, shared: false });
+    if (c) history.replaceState(null, '', '#/capelas/' + c.slug);
+    if (this.maps.full && c) this.focusPin(c, false);
+  }
+  closeDrawer() {
+    this.setState({ drawerId: null });
+    const v = this.state.view; history.replaceState(null, '', v === 'home' ? '#/' : '#/' + v);
+  }
+  openLb(id, i) { this.setState({ lb: { id, i } }); }
+  lbStep(d) { this.setState(s => { const c = s.chapels.find(x => x.id === s.lb.id); const n = this.photos(c).length; return { lb: { ...s.lb, i: (s.lb.i + d + n) % n } }; }); }
+  toggleAudio(key) {
+    if (this.state.audio === key) { clearInterval(this.audioTimer); this.setState({ audio: null }); return; }
+    clearInterval(this.audioTimer);
+    this.setState({ audio: key, audioT: this.state.audioKey === key ? this.state.audioT : 0, audioKey: key });
+    this.audioTimer = setInterval(() => this.setState(s => s.audioT >= AUDIO_LEN ? (clearInterval(this.audioTimer), { audio: null, audioT: 0 }) : { audioT: s.audioT + 0.25 }), 250);
+  }
+  audioVals(key) {
+    const on = this.state.audio === key, t = this.state.audioKey === key ? this.state.audioT : 0;
+    return { playing: on, paused: !on, pct: (t / AUDIO_LEN * 100) + '%', time: fmt(t) + ' / ' + fmt(AUDIO_LEN) };
+  }
+
+  // ---------- maps ----------
+  ensureL(cb, n = 0) { if (window.L) cb(window.L); else if (n < 100) setTimeout(() => this.ensureL(cb, n + 1), 100); }
+  bindMap(key, el, opts) {
+    const cur = this.maps[key];
+    if (!el) { if (cur) { cur.map.remove(); delete this.maps[key]; } return; }
+    if (cur && cur.el === el) return;
+    if (cur) { cur.map.remove(); delete this.maps[key]; }
+    this.ensureL(L => {
+      if (!el.isConnected || this.maps[key]) return;
+      const map = L.map(el, { zoomControl: false, scrollWheelZoom: !!opts.wheel, attributionControl: true }).setView(opts.center || CENTER, opts.zoom || 11);
+      if (opts.relief) {
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: 'Tiles © Esri' }).addTo(map);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, opacity: 0.35 }).addTo(map);
+        map.getPane('tilePane').style.filter = 'sepia(0.32) saturate(0.85) brightness(1.04) contrast(0.96)';
+      } else {
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: 'Tiles © Esri' }).addTo(map);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16 }).addTo(map);
+      }
+      map.setMaxZoom(16);
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+      const m = { el, map, layer: L.layerGroup().addTo(map), sig: '', markers: {} };
+      this.maps[key] = m;
+      if (opts.onClick) map.on('click', opts.onClick);
+      setTimeout(() => { map.invalidateSize(); this.syncMaps(); }, 120);
+    });
+  }
+  refHome = el => this.bindMap('home', el, { zoom: 11, relief: true });
+  refFull = el => this.bindMap('full', el, { zoom: 11, wheel: true, relief: true });
+  refMini = el => this.bindMap('mini', el, { zoom: 14, relief: true });
+  refAdmin = el => this.bindMap('admin', el, { zoom: 14, wheel: true, onClick: e => this.setLatLng(e.latlng.lat, e.latlng.lng) });
+
+  pinHtml(c, active) {
+    const z = ZONES[c.zona], s = active ? 36 : 28;
+    return '<div style="width:' + s + 'px;height:' + s + 'px;border-radius:50%;background:' + z.color + ';color:#fff;font:700 ' + (active ? 13 : 12) + 'px Mulish,sans-serif;display:grid;place-items:center;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(43,38,32,.3);transition:all .2s">' + c.num + '</div>';
+  }
+  tipHtml(c) {
+    const z = ZONES[c.zona];
+    return '<div style="display:flex;gap:10px;align-items:center;font-family:Mulish,sans-serif;min-width:220px"><img src="' + this.cover(c) + '" style="width:64px;height:48px;object-fit:cover;border-radius:6px"><div><div style="font-weight:700;font-size:13px;color:#2B2620;line-height:1.25;white-space:normal;max-width:170px">' + c.name + '</div><div style="font-size:12px;color:#6E655A">' + c.padroeiro + '</div><div style="font-size:11px;font-weight:700;color:' + z.color + ';text-transform:uppercase;letter-spacing:1px;margin-top:2px">' + z.label + '</div></div></div>';
+  }
+  setPins(key, list, active, opts = {}) {
+    const m = this.maps[key]; if (!m || !window.L) return;
+    const L = window.L;
+    const sig = list.map(c => c.id + ':' + c.lat + ',' + c.lng + c.zona + c.media.length).join('|') + '#' + active + '#' + (opts.fit || '');
+    if (m.sig === sig) return;
+    const firstFit = m.sig.split('#')[2] !== (opts.fit || '') || !m.sig;
+    m.sig = sig; m.layer.clearLayers(); m.markers = {};
+    list.forEach(c => {
+      const a = c.id === active;
+      const mk = L.marker([c.lat, c.lng], { icon: L.divIcon({ className: '', html: this.pinHtml(c, a), iconSize: [a ? 36 : 28, a ? 36 : 28], iconAnchor: [a ? 18 : 14, a ? 18 : 14] }), draggable: !!opts.drag, zIndexOffset: a ? 1000 : 0 });
+      if (!opts.noTip) mk.bindTooltip(this.tipHtml(c), { direction: 'top', offset: [0, -14], opacity: 1 });
+      if (opts.click) mk.on('click', () => opts.click(c));
+      if (opts.drag) mk.on('dragend', e => { const p = e.target.getLatLng(); this.setLatLng(p.lat, p.lng); });
+      mk.addTo(m.layer); m.markers[c.id] = mk;
+    });
+    if (opts.zones) Object.keys(ZONES).forEach(z => {
+      const pts = list.filter(c => c.zona === z); if (!pts.length) return;
+      const la = pts.reduce((a, c) => a + c.lat, 0) / pts.length, ln = pts.reduce((a, c) => a + c.lng, 0) / pts.length;
+      const rad = Math.max(1400, ...pts.map(c => m.map.distance([la, ln], [c.lat, c.lng]))) + 1300;
+      L.circle([la, ln], { radius: rad, color: ZONES[z].color, weight: 1.5, dashArray: '4 6', fillColor: ZONES[z].color, fillOpacity: 0.09, interactive: false }).addTo(m.layer);
+    });
+    if (opts.region && active) { const c = list.find(x => x.id === active); if (c) L.circle([c.lat, c.lng], { radius: 900, color: ZONES[c.zona].color, weight: 1, fillOpacity: 0.08 }).addTo(m.layer); }
+    if (opts.fit && firstFit && list.length > 1) m.map.fitBounds(L.latLngBounds(list.map(c => [c.lat, c.lng])), { paddingTopLeft: [40, 80], paddingBottomRight: [40, 40], maxZoom: 13 });
+    if (opts.center) m.map.setView(opts.center, m.map.getZoom());
+  }
+  syncMaps() {
+    const s = this.state, pub = this.pub(), f = z => z === 'todas' ? pub : pub.filter(c => c.zona === z);
+    this.setPins('home', f(s.homeZone), null, { click: c => this.openFicha(c.id), fit: s.homeZone, zones: true });
+    this.setPins('full', f(s.mapZone), s.drawerId || s.hoverId, { click: c => this.openFicha(c.id), fit: s.mapZone, region: true, zones: true });
+    const d = s.chapels.find(c => c.id === s.drawerId);
+    if (d) this.setPins('mini', [d], d.id, { noTip: true, center: [d.lat, d.lng] });
+    const e = s.chapels.find(c => c.id === s.editId);
+    if (e) this.setPins('admin', [e], e.id, { noTip: true, drag: true, center: [e.lat, e.lng] });
+  }
+  focusPin(c, tip) {
+    const m = this.maps.full; if (!m) return;
+    m.map.flyTo([c.lat, c.lng], 14, { duration: 0.8 });
+    if (tip) setTimeout(() => { const mk = this.maps.full && this.maps.full.markers[c.id]; if (mk) mk.openTooltip(); }, 850);
+  }
+  setLatLng(lat, lng) { const id = this.state.editId; this.updChapel(id, c => ({ ...c, lat: +(+lat).toFixed(5), lng: +(+lng).toFixed(5) })); }
+
+  // ---------- media upload ----------
+  addFiles(files) {
+    const id = this.state.editId, arr = [...files].map(f => ({
+      id: uid(), type: f.type.startsWith('video') ? 'video' : f.type.startsWith('audio') ? 'audio' : 'foto',
+      url: URL.createObjectURL(f), caption: f.name.replace(/\.[^.]+$/, ''), alt: '', credit: '', cover: false
+    }));
+    if (!arr.length) return;
+    this.updChapel(id, c => ({ ...c, media: [...c.media, ...arr] }));
+    this.addLog('enviou ' + arr.length + ' arquivo(s) para ' + this.state.chapels.find(c => c.id === id).name, id);
+  }
+  updMedia(mid, patch) { this.updChapel(this.state.editId, c => ({ ...c, media: c.media.map(m => m.id === mid ? { ...m, ...patch } : m) })); }
+  moveMedia(mid, d) {
+    this.updChapel(this.state.editId, c => { const a = [...c.media], i = a.findIndex(m => m.id === mid), j = i + d; if (j < 0 || j >= a.length) return c; [a[i], a[j]] = [a[j], a[i]]; return { ...c, media: a }; });
+  }
+
+  chips(cur, set, withAll = true) {
+    const opts = [['todas', 'Todas', '#141614'], ['urbana', 'Urbana', ZONES.urbana.color], ['rural', 'Rural', ZONES.rural.color], ['distrital', 'Distrital', ZONES.distrital.color]];
+    return opts.map(([k, l, col]) => { const on = cur === k; const pin = k === 'todas' ? '#C9A45C' : ZONES[k].pin; return { label: l, onClick: () => set(k), bg: on ? '#FFF' : 'transparent', color: on ? '#141614' : '#FFF', border: on ? '#FFF' : '#2F352F', dot: on && k === 'todas' ? '#141614' : pin }; });
+  }
+
+  renderVals() {
+    const s = this.state, pub = this.pub(), isAdmin = s.view === 'admin';
+    const navDefs = [['Início', 'home'], ['Capelas', 'capelas'], ['Mapa', 'mapa']];
+    const navItems = navDefs.map(([l, v]) => ({ label: l, onClick: () => v && this.go(v), color: s.view === v ? '#FFFFFF' : '#9AA39C', line: s.view === v ? '#FFFFFF' : 'transparent' }));
+    const heroImgs = [12, 3, 0, 10, 18];
+    const heroSlides = heroImgs.map((n, i) => ({ src: img(n), alt: 'Fachada de capela em Triunfo', op: i === s.hero ? 1 : 0, scale: i === s.hero ? 1.06 : 1, dotW: i === s.hero ? '28px' : '10px', dotOp: i === s.hero ? 1 : 0.55 }));
+    const featured = pub.filter(c => c.destaque).map(c => this.card(c));
+    const fN = featured.length || 1, fI = (s.featIdx || 0) % fN, fc = featured[fI] || this.card(pub[0]);
+    const fPh = this.photos(fc), fPn = fPh.length || 1, fP = (s.featPhoto || 0) % fPn;
+    const fe = {
+      ...fc, pos: pad2(fI + 1) + ' / ' + pad2(featured.length),
+      src: (fPh[fP] || {}).url, alt: (fPh[fP] || {}).alt, counter: (fP + 1) + '/' + fPh.length,
+      dots: fPh.map((_, i) => ({ w: i === fP ? '22px' : '8px', op: i === fP ? 1 : 0.6 })),
+      photoPrev: e => { e.stopPropagation(); this.setState({ featPhoto: (fP - 1 + fPn) % fPn }); },
+      photoNext: e => { e.stopPropagation(); this.setState({ featPhoto: (fP + 1) % fPn }); },
+      expand: () => this.openLb(fc.id, fP),
+      facts: [['Festa', fc.festa], ['Fundação', 'c. ' + fc.ano], ['Estilo', fc.estilo], ['Guardião(ã)', fc.guardiao]].map(([k, v]) => ({ k, v })),
+      excerpt: (() => { const p = (fc.historia || '').split(/\n\s*\n/)[0] || ''; return p.length > 240 ? p.slice(0, 237).replace(/\s\S*$/, '') + '…' : p; })()
+    };
+    const featThumbs = featured.map((c, i) => ({ name: c.name, cover: c.cover, onClick: () => this.setState({ featIdx: i, featPhoto: 0 }), op: i === fI ? 1 : 0.6, ring: i === fI ? '#FFFFFF' : 'transparent', pin: 0 }));
+
+    // gallery
+    const q = s.search.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    let gl = pub.filter(c => (s.galZone === 'todas' || c.zona === s.galZone) && (!q || (c.name + ' ' + c.padroeiro + ' ' + c.localidade).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(q)));
+    gl = [...gl].sort((a, b) => s.sort === 'az' ? a.name.localeCompare(b.name) : s.sort === 'old' ? a.ano - b.ano : s.sort === 'new' ? b.ano - a.ano : a.num - b.num);
+
+    const ml = (s.mapZone === 'todas' ? pub : pub.filter(c => c.zona === s.mapZone));
+    const mapList = pub.map(c => ({ ...this.card(c), pinColor: ZONES[c.zona].pin, rowBg: s.mapFocus === c.id ? '#1C211C' : 'transparent', focus: () => this.setState({ mapFocus: c.id }) }));
+    const mapChapels = pub.map(c => ({ id: c.id, num: c.num, name: c.name, padroeiro: c.padroeiro, zona: c.zona, localidade: c.localidade, lat: c.lat, lng: c.lng, cover: this.cover(c) }));
+
+    // drawer
+    let d = {}; const dc = s.chapels.find(c => c.id === s.drawerId);
+    if (dc) {
+      const z = ZONES[dc.zona], ph = this.photos(dc), n = ph.length || 1, cur = ph[s.slide % n] || {};
+      const idx = pub.findIndex(c => c.id === dc.id), prev = pub[(idx - 1 + pub.length) % pub.length], next = pub[(idx + 1) % pub.length];
+      const vid = dc.media.find(m => m.type === 'video'), aud = dc.media.find(m => m.type === 'audio');
+      const yt = vid && vid.embed ? (vid.url.match(/(?:youtu\.be\/|v=)([\w-]{6,})/) || [])[1] : null;
+      const vm = vid && vid.embed ? (vid.url.match(/vimeo\.com\/(\d+)/) || [])[1] : null;
+      const embedUrl = yt ? 'https://www.youtube.com/embed/' + yt : vm ? 'https://player.vimeo.com/video/' + vm : '';
+      d = {
+        ...dc, numStr: pad2(dc.num), zoneLabel: z.label, zoneColor: z.color, zoneBg: z.bg,
+        mainSrc: cur.url, mainAlt: cur.alt, counter: ((s.slide % n) + 1) + '/' + ph.length,
+        thumbs: ph.map((p, i) => ({ src: p.url, onClick: () => this.setState({ slide: i }), border: i === s.slide % n ? '#141614' : 'transparent', op: i === s.slide % n ? 1 : 0.7 })),
+        prev: () => this.setState({ slide: (s.slide - 1 + n) % n }), next: () => this.setState({ slide: (s.slide + 1) % n }),
+        expand: () => this.openLb(dc.id, s.slide % n),
+        ficha: [['Padroeiro(a)', dc.padroeiro], ['Festa', dc.festa], ['Fundação', 'c. ' + dc.ano], ['Localização', dc.localidade], ['Zona', z.label], ['Estilo', dc.estilo], ['Conservação', dc.conservacao], ['Guardião(ã)', dc.guardiao], ['Coordenadas', dc.lat.toFixed(4) + ', ' + dc.lng.toFixed(4)], ['Acervo', ph.length + ' fotos · áudio · vídeo']].map(([k, v]) => ({ k, v })),
+        paras: dc.historia.split(/\n\s*\n/).filter(Boolean).map(t => ({ t })),
+        quote: dc.citacao, ...this.audioVals('d' + dc.id), play: () => this.toggleAudio('d' + dc.id),
+        hasAudioFile: !!aud, audioUrl: aud ? aud.url : '',
+        hasVideoFile: !!(vid && !vid.embed), videoUrl: vid && !vid.embed ? vid.url : '',
+        hasEmbed: !!embedUrl, embedUrl, noVideo: !vid || (vid.embed && !embedUrl),
+        videoPoster: (ph[1] || ph[0] || {}).url,
+        mapsUrl: 'https://www.google.com/maps/dir/?api=1&destination=' + dc.lat + ',' + dc.lng,
+        wazeUrl: 'https://waze.com/ul?ll=' + dc.lat + ',' + dc.lng + '&navigate=yes',
+        same: pub.filter(c => c.zona === dc.zona && c.id !== dc.id).slice(0, 3).map(c => ({ name: c.name, cover: this.cover(c), open: () => this.openFicha(c.id) })),
+        prevName: prev.name, nextName: next.name, goPrev: () => this.openFicha(prev.id), goNext: () => this.openFicha(next.id),
+        share: () => { try { navigator.clipboard.writeText(location.href); } catch (e) {} this.setState({ shared: true }); }
+      };
+    }
+    let lb = {};
+    if (s.lb) { const c = s.chapels.find(x => x.id === s.lb.id), ph = this.photos(c), p = ph[s.lb.i] || {}; lb = { src: p.url, alt: p.alt, caption: p.caption, credit: p.credit || '—', counter: (s.lb.i + 1) + '/' + ph.length, title: c.name }; }
+
+    const vz = [[11, 50], [3, 37], [19, 70]].map(([id, im], i) => { const c = s.chapels.find(x => x.id === id); return { name: c.guardiao, role: 'Guardiã(o) da ' + c.name, quote: c.citacao, img: img(im), ...this.audioVals('v' + i), play: () => this.toggleAudio('v' + i) }; });
+    const rotas = ['urbana', 'rural', 'distrital'].map((z, i) => ({ label: 'Rota ' + ZONES[z].label.toLowerCase(), count: pub.filter(c => c.zona === z).length, img: img([3, 19, 10][i]), dot: ZONES[z].color, onClick: () => { this.setState({ galZone: z }); this.go('capelas'); } }));
+    const nDots = Math.max(1, featured.length - 2);
+
+    // admin
+    const aNav = [['Painel', 'painel'], ['Capelas', 'capelas'], ['Biblioteca de mídia', 'midia'], ['Guardiões', 'guardioes']];
+    const ec = s.chapels.find(c => c.id === s.editId);
+    const missingAlt = c => c.media.filter(m => !m.alt.trim()).length;
+    const vals = {
+      isPublic: !isAdmin, isHome: s.view === 'home', isCapelas: s.view === 'capelas', isMapa: s.view === 'mapa', isAdmin, showFooter: s.view !== 'mapa',
+      zoom: s.big ? 1.12 : 1, filter: s.contrast ? 'contrast(1.25) saturate(0.9)' : 'none', bigBg: s.big ? '#2A2F2A' : 'transparent', conBg: s.contrast ? '#2A2F2A' : 'transparent',
+      toggleBig: () => this.setState({ big: !s.big }, () => Object.values(this.maps).forEach(m => m.map.invalidateSize())),
+      toggleContrast: () => this.setState({ contrast: !s.contrast }),
+      navItems, goHome: () => this.go('home'), goCapelas: () => this.go('capelas'), goMapa: () => this.go('mapa'), goAdmin: () => this.go('admin'),
+      goSearch: () => { this.go('capelas'); setTimeout(() => this.searchEl && this.searchEl.focus(), 60); },
+      searchRef: el => { this.searchEl = el; },
+      featured, fe: { ...fe, pinColor: ZONES[fe.zona].pin }, featThumbs, scrollDown: () => { const el = this.afterHeroEl; if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 64, behavior: 'smooth' }); }, afterHeroRef: el => { this.afterHeroEl = el; }, mapChapels, mapFocus: s.mapFocus || null, voz0: vz[0],
+      onMapOpen: this.onMapOpen || (this.onMapOpen = id => this.openFicha(id)),
+      featPrev: () => this.setState({ featIdx: (fI - 1 + fN) % fN, featPhoto: 0 }),
+      featNext: () => this.setState({ featIdx: (fI + 1) % fN, featPhoto: 0 }),
+      introDone: !!s.introDone, introPlaying: !s.introDone, introKey: s.introKey || 0, introSkip: !!s.introSkip,
+      onIntroEnd: this.onIntroEnd || (this.onIntroEnd = () => this.setState({ introDone: true })),
+      skipIntro: () => this.setState({ introSkip: true }),
+      replayIntro: () => this.setState(st => ({ introDone: false, introSkip: false, introKey: (st.introKey || 0) + 1 })),
+      carRef: el => { this.carEl = el; },
+      carPrev: () => this.carEl && this.carEl.scrollBy({ left: -380, behavior: 'smooth' }),
+      carNext: () => this.carEl && this.carEl.scrollBy({ left: 380, behavior: 'smooth' }),
+      onCarScroll: e => { const el = e.currentTarget, max = el.scrollWidth - el.clientWidth; const i = max > 0 ? Math.round(el.scrollLeft / max * (nDots - 1)) : 0; if (i !== s.car) this.setState({ car: i }); },
+      carDots: Array.from({ length: nDots }, (_, i) => ({ w: i === s.car ? '26px' : '8px', bg: i === s.car ? '#141614' : '#E3E6E2' })),
+      homeChips: this.chips(s.homeZone, z => this.setState({ homeZone: z })),
+      refHome: this.refHome, refFull: this.refFull, refMini: this.refMini, refAdmin: this.refAdmin,
+      rotas, vozes: vz,
+      galChips: this.chips(s.galZone, z => this.setState({ galZone: z })),
+      search: s.search, onSearch: e => this.setState({ search: e.target.value }), sort: s.sort, onSort: e => this.setState({ sort: e.target.value }),
+      galList: gl.map(c => this.card(c)), galEmpty: gl.length === 0, galCount: gl.length + (gl.length === 1 ? ' capela' : ' capelas'),
+      clearFilters: () => this.setState({ galZone: 'todas', search: '' }),
+      mapChips: this.chips(s.mapZone, z => this.setState({ mapZone: z })), mapList, mapCount: pub.length + ' capelas no mapa',
+      resetView: () => { const m = this.maps.full; if (m && window.L) m.map.flyToBounds(window.L.latLngBounds(ml.map(c => [c.lat, c.lng])), { paddingTopLeft: [40, 80], paddingBottomRight: [40, 40], duration: 0.8 }); },
+      locateMe: () => { const m = this.maps.full; if (m) m.map.locate({ setView: true, maxZoom: 13 }); },
+      drawerOpen: !!dc, d, closeDrawer: () => this.closeDrawer(), shareLabel: s.shared ? 'Link copiado' : 'Compartilhar',
+      transOpen: s.transOpen, toggleTrans: () => this.setState({ transOpen: !s.transOpen }), transLabel: s.transOpen ? 'Ocultar transcrição' : 'Ler transcrição',
+      lbOpen: !!s.lb, lb, lbClose: () => this.setState({ lb: null }), lbPrev: e => { e.stopPropagation(); this.lbStep(-1); }, lbNext: e => { e.stopPropagation(); this.lbStep(1); }, stop: e => e.stopPropagation(),
+      needLogin: isAdmin && !s.authed, authed: isAdmin && s.authed, doLogin: e => { e && e.preventDefault && e.preventDefault(); this.setState({ authed: true, aView: 'painel' }); },
+      doLogout: () => this.setState({ authed: false, loginPass: '' }),
+      loginEmail: s.loginEmail ?? 'ana@sertaodefe.org', loginPass: s.loginPass ?? '',
+      onLoginEmail: e => this.setState({ loginEmail: e.target.value }), onLoginPass: e => this.setState({ loginPass: e.target.value }),
+      userName: (() => { const m = (s.loginEmail ?? 'ana@sertaodefe.org').split('@')[0] || 'Equipe'; return m.charAt(0).toUpperCase() + m.slice(1); })(),
+      adminNav: aNav.map(([l, v]) => { const on = s.aView === v || (v === 'capelas' && s.aView === 'editor'); return { label: l, onClick: () => this.setState({ aView: v }), bg: on ? '#E8EEF5' : 'transparent', color: on ? '#2F5B8A' : '#141614' }; }),
+      aPainel: s.aView === 'painel', aCapelas: s.aView === 'capelas', aEditor: s.aView === 'editor' && !!ec, aMidia: s.aView === 'midia', aGuard: s.aView === 'guardioes',
+      adminStats: [
+        { k: 'Capelas publicadas', v: s.chapels.filter(c => c.status === 'Publicado').length },
+        { k: 'Em revisão ou rascunho', v: s.chapels.filter(c => c.status !== 'Publicado').length },
+        { k: 'Arquivos de mídia', v: s.chapels.reduce((a, c) => a + c.media.length, 0) },
+        { k: 'Arquivos sem alt-text', v: s.chapels.reduce((a, c) => a + missingAlt(c), 0) }
+      ],
+      logList: s.log.slice(0, 6).map(l => ({ who: l.who, what: l.what, when: ago(l.t) })),
+      newChapel: () => {
+        const id = Math.max(...s.chapels.map(c => c.id)) + 1;
+        const c = { id, num: id, slug: 'nova-capela-' + id, name: 'Nova capela', padroeiro: '', zona: 'rural', localidade: '', ano: '', festa: '', estilo: '', conservacao: 'Bom', guardiao: '', lat: CENTER[0], lng: CENTER[1], historia: '', citacao: '', transcricao: '', media: [], destaque: false, status: 'Rascunho' };
+        this.setState({ chapels: [...s.chapels, c], editId: id, aView: 'editor', aTab: 'dados' });
+        this.addLog('criou um rascunho de capela', id);
+      },
+      adminRows: s.chapels.map(c => { const z = ZONES[c.zona], st = ST[c.status], ma = missingAlt(c); return { numStr: pad2(c.num), name: c.name, cover: this.photos(c)[0] ? this.photos(c)[0].url : '', zoneLabel: z.label, zoneColor: z.color, status: c.status, stBg: st.bg, stColor: st.color, destaque: c.destaque ? 'Sim' : '—', mediaInfo: c.media.length + ' arquivos' + (ma ? ' · ' + ma + ' sem alt' : ''), edit: () => this.setState({ editId: c.id, aView: 'editor', aTab: 'dados', saved: false }) }; }),
+      backList: () => this.setState({ aView: 'capelas' }),
+      saveLabel: s.saved ? 'Salvo ✓' : 'Salvar',
+      dropBorder: s.drag ? '#2F5B8A' : '#CFC4B0', dropBg: s.drag ? '#E8EEF5' : '#FFF',
+      onDragOver: e => { e.preventDefault(); if (!s.drag) this.setState({ drag: true }); },
+      onDragLeave: () => this.setState({ drag: false }),
+      onDrop: e => { e.preventDefault(); this.setState({ drag: false }); this.addFiles(e.dataTransfer.files); },
+      onFiles: e => { this.addFiles(e.target.files); e.target.value = ''; },
+      linkDraft: s.linkDraft, onLinkDraft: e => this.setState({ linkDraft: e.target.value }),
+      addLink: () => { const u = s.linkDraft.trim(); if (!u) return; this.updChapel(s.editId, c => ({ ...c, media: [...c.media, { id: uid(), type: 'video', url: u, embed: true, caption: 'Entrevista em vídeo', alt: '', credit: '', cover: false }] })); this.setState({ linkDraft: '' }); this.addLog('adicionou um vídeo externo', s.editId); }
+    };
+    const pending = [];
+    s.chapels.forEach(c => { const ma = missingAlt(c); if (c.status !== 'Publicado') pending.push({ name: c.name, issue: c.status, onClick: () => this.setState({ editId: c.id, aView: 'editor', aTab: 'publicacao' }) }); if (ma) pending.push({ name: c.name, issue: ma + ' sem alt-text', onClick: () => this.setState({ editId: c.id, aView: 'editor', aTab: 'midia' }) }); if (!this.photos(c).length) pending.push({ name: c.name, issue: 'sem capa', onClick: () => this.setState({ editId: c.id, aView: 'editor', aTab: 'midia' }) }); });
+    vals.pendencias = pending.slice(0, 6); vals.noPend = pending.length === 0;
+
+    if (ec) {
+      const st = ST[ec.status], set = k => e => this.updChapel(ec.id, c => ({ ...c, [k]: e.target.value }));
+      const tabs = [['Dados', 'dados'], ['Localização', 'local'], ['Mídia', 'midia'], ['Textos', 'textos'], ['Publicação', 'publicacao']];
+      const ma = missingAlt(ec);
+      vals.eTabs = tabs.map(([l, k]) => ({ label: l, warn: k === 'midia' && ma ? ' · ' + ma : '', onClick: () => this.setState({ aTab: k }), color: s.aTab === k ? '#2F5B8A' : '#6E655A', line: s.aTab === k ? '#2F5B8A' : 'transparent' }));
+      ['dados', 'local', 'midia', 'textos', 'publicacao'].forEach((k, i) => { vals[['tDados', 'tLocal', 'tMidia', 'tTextos', 'tPub'][i]] = s.aTab === k; });
+      const zOpts = Object.keys(ZONES).map(k => ({ v: k, l: ZONES[k].label }));
+      const cOpts = ['Bom', 'Regular', 'Precário', 'Em restauro'].map(v => ({ v, l: v }));
+      vals.eFields = [['Nome', 'name'], ['Número', 'num'], ['Padroeiro(a)', 'padroeiro'], ['Data da festa', 'festa'], ['Ano de fundação', 'ano'], ['Zona', 'zona', zOpts], ['Localidade', 'localidade'], ['Estilo arquitetônico', 'estilo'], ['Estado de conservação', 'conservacao', cOpts], ['Guardião(ã) responsável', 'guardiao']]
+        .map(([label, k, opts]) => ({ label, value: String(ec[k] ?? ''), onChange: k === 'num' ? (e => this.updChapel(ec.id, c => ({ ...c, num: +e.target.value || c.num }))) : set(k), isText: !opts, isSelect: !!opts, options: opts || [] }));
+      vals.e = {
+        title: ec.name || 'Sem nome', status: ec.status, stBg: st.bg, stColor: st.color,
+        preview: () => { this.go('capelas'); setTimeout(() => this.setState({ drawerId: ec.id, slide: 0 }), 50); },
+        save: () => { this.setState({ saved: true }); this.addLog('salvou ' + ec.name, ec.id); },
+        lat: String(ec.lat), lng: String(ec.lng),
+        onLat: e => this.updChapel(ec.id, c => ({ ...c, lat: e.target.value === '' || isNaN(+e.target.value) ? c.lat : +e.target.value })),
+        onLng: e => this.updChapel(ec.id, c => ({ ...c, lng: e.target.value === '' || isNaN(+e.target.value) ? c.lng : +e.target.value })),
+        featBg: ec.destaque ? '#2F5B8A' : '#D8CFBF', featLeft: ec.destaque ? '21px' : '3px',
+        toggleFeat: () => this.updChapel(ec.id, c => ({ ...c, destaque: !c.destaque }))
+      };
+      vals.eMedia = ec.media.map(m => ({
+        ...m, isFoto: m.type === 'foto', notFoto: m.type !== 'foto', typeLabel: m.type === 'video' ? (m.embed ? 'VÍDEO · LINK' : 'VÍDEO') : 'ÁUDIO',
+        altBorder: m.alt.trim() ? '#E3E6E2' : '#B4633E', canCover: m.type === 'foto' && !m.cover,
+        onCaption: e => this.updMedia(m.id, { caption: e.target.value }), onAlt: e => this.updMedia(m.id, { alt: e.target.value }), onCredit: e => this.updMedia(m.id, { credit: e.target.value }),
+        up: () => this.moveMedia(m.id, -1), down: () => this.moveMedia(m.id, 1),
+        setCover: () => this.updChapel(ec.id, c => ({ ...c, media: c.media.map(x => ({ ...x, cover: x.id === m.id })) })),
+        remove: () => { this.updChapel(ec.id, c => ({ ...c, media: c.media.filter(x => x.id !== m.id) })); this.addLog('moveu um arquivo para a lixeira', ec.id); }
+      }));
+      vals.eTexts = [['História', 'historia', 9], ['Citação de destaque', 'citacao', 2], ['Transcrição do depoimento', 'transcricao', 5]].map(([label, k, rows]) => ({ label, value: ec[k], onChange: set(k), rows }));
+      vals.eStatus = ['Rascunho', 'Em revisão', 'Publicado'].map(l => { const on = ec.status === l; return { label: l, onClick: () => { this.updChapel(ec.id, c => ({ ...c, status: l })); this.addLog('mudou ' + ec.name + ' para ' + l, ec.id); }, bg: on ? ST[l].bg : '#FFF', color: on ? ST[l].color : '#6E655A', border: on ? ST[l].color : '#E3E6E2' }; });
+      vals.eChecks = [['Capa definida', this.photos(ec).length > 0], ['Alt-text em todas as imagens', ma === 0], ['Coordenadas preenchidas', !!ec.lat], ['História escrita', ec.historia.trim().length > 40]].map(([label, ok]) => ({ label, mark: ok ? '✓' : '!', color: ok ? '#5E8466' : '#B4633E' }));
+      const hist = s.log.filter(l => l.cid === ec.id).map(l => ({ who: l.who, what: l.what, when: ago(l.t) }));
+      vals.eHistory = hist.length ? hist : [{ who: 'Sistema', what: 'versão inicial importada do catálogo', when: 'há 5 d' }];
+    }
+    const all = []; s.chapels.forEach(c => c.media.forEach(m => all.push({ ...m, chapel: c.name, cid: c.id })));
+    const lt = s.libType;
+    vals.libChips = [['todos', 'Todos'], ['foto', 'Fotos'], ['video', 'Vídeos'], ['audio', 'Áudios']].map(([k, l]) => { const on = lt === k; return { label: l + ' · ' + (k === 'todos' ? all.length : all.filter(m => m.type === k).length), onClick: () => this.setState({ libType: k }), bg: on ? '#141614' : '#FFF', color: on ? '#FFF' : '#141614', border: on ? '#141614' : '#E3E6E2' }; });
+    vals.libList = all.filter(m => lt === 'todos' || m.type === lt).map(m => ({ ...m, isFoto: m.type === 'foto', notFoto: m.type !== 'foto', typeLabel: m.type === 'video' ? 'VÍDEO' : 'ÁUDIO', noAlt: !m.alt.trim(), caption: m.caption || 'Sem legenda', open: () => this.setState({ editId: m.cid, aView: 'editor', aTab: 'midia' }) }));
+    vals.guardList = s.chapels.filter(c => c.guardiao).map(c => ({ name: c.guardiao, chapel: c.name, initial: c.guardiao.replace(/^(Dona|Seu)\s+/, '')[0] }));
+    return vals;
+  }
+}
+</script>
+</body>
+</html>
