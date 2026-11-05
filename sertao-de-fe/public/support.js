@@ -21,6 +21,11 @@
   ));
 
   // src/parse.ts
+  // Um <template> em volta do modelo impede o navegador de baixar {{ }} como URL.
+  function unwrapTemplate(html) {
+    const m = /^\s*<template data-dc-template(?:="")?>([\s\S]*)<\/template>\s*$/.exec(html);
+    return m ? m[1] : html;
+  }
   function parseDcDocument(doc) {
     const dc = doc.querySelector("x-dc");
     if (!dc) return null;
@@ -29,7 +34,7 @@
       scriptEl?.getAttribute("data-props") ?? null
     );
     return {
-      template: dc.innerHTML,
+      template: unwrapTemplate(dc.innerHTML),
       js: scriptEl ? scriptEl.textContent || "" : "",
       props,
       preview
@@ -40,7 +45,7 @@
     if (!openMatch) return null;
     const close = src.lastIndexOf("</x-dc>");
     if (close === -1 || close < openMatch.index) return null;
-    const template = src.slice(openMatch.index + openMatch[0].length, close);
+    const template = unwrapTemplate(src.slice(openMatch.index + openMatch[0].length, close));
     const doc = new DOMParser().parseFromString(src, "text/html");
     const scriptEl = doc.querySelector("script[data-dc-script]");
     const { props, preview } = parseDataProps(

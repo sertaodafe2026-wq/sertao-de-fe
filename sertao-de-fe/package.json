@@ -4,6 +4,7 @@
   "private": true,
   "description": "Sertão de Fé — portal das capelas de Triunfo-PE",
   "scripts": {
-    "dev": "npx --yes serve@14.2.4 public -l 3000"
+    "dev": "npx --yes serve@14.2.4 public -l 3000",
+    "db:gerar-seed": "node scripts/gerar-seed.mjs"
   }
 }
